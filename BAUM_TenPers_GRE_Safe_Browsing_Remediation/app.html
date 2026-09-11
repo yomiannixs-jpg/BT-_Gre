@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>BAUM TenPers GRE App</title>
+<meta name="theme-color" content="#230078"/>
+<link rel="stylesheet" href="auth-gate.css"/>
+<link rel="stylesheet" href="baum-shell.css"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="auth-gate.js" defer></script>
+<script src="baum-shell.js" defer></script>
+<style>
+:root{--p:#230078;--p2:#35108f;--g:#ffc533;--ink:#160d38;--muted:#6a6480;--line:#e4def0;--bg:#f7f5fb}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif}
+a{text-decoration:none;color:inherit}
+.app-header{
+  height:86px;background:white;border-bottom:4px solid var(--g);
+  display:flex;align-items:center;justify-content:space-between;padding:12px 28px 12px 34px;
+  position:sticky;top:0;z-index:100
+}
+.brand-link{display:flex;align-items:center;gap:17px}
+.logo-mark{
+  width:128px;height:54px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  background:white;border:1px solid #eee8f6;overflow:hidden
+}
+.logo-mark img{max-width:100%;max-height:100%;object-fit:contain}
+.logo-fallback{font-weight:1000;color:var(--p);font-size:22px}
+.brand-title{font-size:23px;font-weight:900}.brand-sub{font-size:14px;color:var(--muted);margin-top:4px}
+.user-chip{background:var(--p);color:white;border-radius:14px;padding:12px 15px;display:flex;align-items:center;gap:15px}
+.logout{border:0;background:transparent;color:var(--g);font-weight:900;cursor:pointer}
+.main{max-width:1400px;margin:auto;padding:22px 32px 38px}
+.bank{
+  background:white;border:1px solid var(--line);border-left:5px solid var(--g);border-radius:17px;
+  padding:16px 22px;color:#655e7b;line-height:1.45
+}.bank b{color:var(--ink)}
+.hero{
+  margin-top:18px;border-radius:22px;border-bottom:6px solid var(--g);
+  background:radial-gradient(circle at 72% 115%,rgba(116,80,223,.19),transparent 300px),linear-gradient(135deg,#230078 0%,#32108e 60%,#4c27a8 100%);
+  min-height:260px;padding:32px 34px;color:white;display:grid;grid-template-columns:1.55fr .75fr;gap:34px;align-items:center
+}
+.hero .welcome{color:#ece6ff;font-size:17px;margin-bottom:8px}.hero h1{font-size:48px;line-height:1.03;margin:0 0 8px}.hero h2{font-size:24px;color:#fff178;margin:0 0 23px}.hero p{font-size:17px;line-height:1.5;color:#f0ebff;margin:0}
+.target{
+  background:rgba(14,23,39,.86);border:1px solid rgba(255,255,255,.17);border-radius:16px;padding:23px
+}
+.target small{color:#c7c2d4}.target .score{font-size:58px;font-weight:1000;line-height:1;margin:9px 0 14px}.target .days{font-size:17px;margin-bottom:17px}
+.track{height:11px;border-radius:99px;background:#35415b;overflow:hidden}.track>div{width:7%;height:100%;background:var(--g);border-radius:99px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}
+.stat{
+  background:white;border:1px solid var(--line);border-radius:17px;padding:16px;display:flex;gap:14px;align-items:center;min-height:110px
+}
+.stat-icon{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:#efe7ff;color:#5f22d0;font-size:25px;flex:0 0 auto}
+.stat.blue .stat-icon{background:#e3f0ff;color:#006bd8}.stat.green .stat-icon{background:#def7e7;color:#0b9a43}
+.stat .label{font-size:13px;color:var(--muted);font-weight:800}.stat .big{font-size:29px;font-weight:1000;color:#35108f;margin:2px 0}.stat .small{font-size:12px;color:var(--muted)}
+.panel{margin-top:18px;background:white;border:1px solid var(--line);border-radius:20px;padding:20px 22px}
+.badge{display:inline-block;background:#eee7ff;color:var(--p);font-size:12px;font-weight:900;border-radius:999px;padding:5px 9px}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:13px}
+.quick a{border:1px solid #d9cff0;border-radius:16px;padding:17px;min-height:120px;display:flex;align-items:center;gap:13px;background:#fbf9ff;transition:.15s}
+.quick a:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(35,0,120,.09)}
+.quick a.blue{background:#f2f8ff;border-color:#c5defa}.quick a.green{background:#f1fff6;border-color:#bbe7c9}
+.qico{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;background:#e8dcff;color:#6424d5;font-size:24px;flex:0 0 auto}.blue .qico{background:#ddecff;color:#006bd8}.green .qico{background:#d9f7e4;color:#0c9b45}
+.quick h3{font-size:16px;margin:0 0 5px}.quick p{font-size:13px;color:var(--muted);margin:0;line-height:1.35}.arr{margin-left:auto;font-size:28px;color:#5d22d5}
+.bottom{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.bottom a{background:white;border:1px solid var(--line);border-radius:16px;padding:17px 20px;display:flex;align-items:center;gap:14px}
+.bottom .bico{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:#dff8e8;color:#119b4b;font-size:23px}.bottom a:nth-child(2) .bico{background:#efe5ff;color:#6a26d9}
+.bottom b{font-size:12px;background:#eee6ff;color:#5b23c3;padding:3px 7px;border-radius:999px}.bottom p{margin:5px 0 0;color:var(--muted);font-size:13px}.bottom .arr{margin-left:auto}
+@media(max-width:1100px){.stats,.quick{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.app-header{padding-left:56px}}
+@media(max-width:650px){.main{padding:16px}.brand-title{font-size:18px}.brand-sub{display:none}.logo-mark{width:84px}.hero h1{font-size:35px}.stats,.quick,.bottom{grid-template-columns:1fr}.user-chip{padding:9px 10px}}
+</style>
+</head>
+<body>
+<header class="app-header">
+  <a href="index.html" class="brand-link" aria-label="App Home">
+    <div class="logo-mark">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/BT_logo.png" alt="BAUM TenPers" onerror="this.style.display='none';this.parentElement.innerHTML='<span class=&quot;logo-fallback&quot;>BAUM</span>'">
+    </div>
+    <div><div class="brand-title">BAUM TenPers GRE App</div><div class="brand-sub">Study · Practice · Test &nbsp;|&nbsp; Secure Cloud GRE Platform</div></div>
+  </a>
+  <div class="user-chip"><span id="currentStudentName">Student</span><button class="logout" onclick="BAUM_AUTH.logout()">Logout</button></div>
+</header>
+
+<main class="main">
+  <section class="bank"><b>Expanded Question Bank: 10,000 questions</b> · 5,000 Quant · 5,000 Verbal · Reading Comprehension · Text Completion · Sentence Equivalence · Algebra · Arithmetic · Geometry · Data Analysis · Probability · Statistics · Quantitative Comparison</section>
+
+  <section class="hero">
+    <div><div class="welcome">Welcome to the</div><h1>BAUM TenPers GRE App</h1><h2>Study. Practice. Test. Improve.</h2><p>10,000-question secure cloud bank: 5,000 Quant + 5,000 Verbal.<br>Your complete platform for GRE preparation.</p></div>
+    <div class="target"><small>Target</small><div class="score" id="targetScore">340</div><div class="days" id="daysToTest">142 days until test day</div><div class="track"><div></div></div></div>
+  </section>
+
+  <section class="stats">
+    <div class="stat"><div class="stat-icon">▱</div><div><div class="label">Total Questions</div><div class="big">10,000</div><div class="small">5,000 Quant + 5,000 Verbal</div></div></div>
+    <div class="stat blue"><div class="stat-icon">◎</div><div><div class="label">Target Score</div><div class="big" id="targetScoreSmall">340</div><div class="small">Set your goal and track progress</div></div></div>
+    <div class="stat"><div class="stat-icon">▥</div><div><div class="label">Best Practice Score</div><div class="big" id="bestPracticeScore">--</div><div class="small">estimated</div></div></div>
+    <div class="stat"><div class="stat-icon">◫</div><div><div class="label">Current Streak</div><div class="big" id="currentStreak">0</div><div class="small">days</div></div></div>
+  </section>
+
+  <section class="panel">
+    <span class="badge">QUICK ACCESS</span>
+    <div class="quick">
+      <a href="test.html"><div class="qico">▤</div><div><h3>Open Test Center</h3><p>Choose section, format and question count.</p></div><div class="arr">›</div></a>
+      <a class="blue" href="timed.html"><div class="qico">◷</div><div><h3>Timed CBT</h3><p>Practice in a realistic timed environment.</p></div><div class="arr">›</div></a>
+      <a class="green" href="practice.html"><div class="qico">✎</div><div><h3>Untimed Practice</h3><p>Build skills at your own pace.</p></div><div class="arr">›</div></a>
+      <a href="simulation.html"><div class="qico">▥</div><div><h3>Full Simulation</h3><p>54-question Quant + Verbal with automatic review.</p></div><div class="arr">›</div></a>
+    </div>
+  </section>
+
+  <section class="bottom">
+    <a href="performance.html"><div class="bico">↗</div><div><b>PERFORMANCE TRACKER</b><p>Track accuracy, timing, progress and readiness over time.</p></div><div class="arr">›</div></a>
+    <a href="study.html"><div class="bico">▱</div><div><b>STUDY LIBRARY</b><p>Review concepts, formulas and strategies.</p></div><div class="arr">›</div></a>
+  </section>
+</main>
+
+<script>
+function localUser(){try{return JSON.parse(localStorage.getItem('baumGreCurrentUser')||'null')}catch(e){return null}}
+function readHist(){try{const u=localUser(),email=String(u?.email||'').toLowerCase();return JSON.parse(localStorage.getItem(email?`baumAnalyticsHistory:${email}`:'baumAnalyticsHistory')||localStorage.getItem('baumAnalyticsHistory')||'[]')}catch(e){return []}}
+function acc(c,t){return t?Math.round(100*c/t):null}
+function score(a){return a===null?null:Math.max(130,Math.min(170,Math.round(130+40*a/100)))}
+function hydrate(){
+  const u=localUser(); if(u) document.getElementById('currentStudentName').textContent=u.name||u.email||'Student';
+  const target=localStorage.getItem('baumGreTargetScore')||'340';document.getElementById('targetScore').textContent=target;document.getElementById('targetScoreSmall').textContent=target;
+  const raw=localStorage.getItem('baumGreTestDate'); if(raw){const d=new Date(raw+'T12:00:00');const days=Math.max(0,Math.ceil((d-new Date())/86400000));document.getElementById('daysToTest').textContent=`${days} days until test day`}
+  const h=readHist();let qc=0,qt=0,vc=0,vt=0;h.forEach(x=>{qc+=x.quant?.c||0;qt+=x.quant?.t||0;vc+=x.verbal?.c||0;vt+=x.verbal?.t||0});
+  const q=score(acc(qc,qt)),v=score(acc(vc,vt));document.getElementById('bestPracticeScore').textContent=q&&v?q+v:'--';
+  if(h.length){const days=[...new Set(h.map(x=>new Date(x.ts).toDateString()))];let streak=1;for(let i=1;i<days.length;i++){const a=new Date(days[i-1]),b=new Date(days[i]);if(Math.round((a-b)/86400000)===1)streak++;else break}document.getElementById('currentStreak').textContent=streak}
+}
+window.addEventListener('DOMContentLoaded',hydrate);
+</script>
+</body></html>

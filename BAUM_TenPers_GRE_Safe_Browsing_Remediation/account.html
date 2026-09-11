@@ -1,0 +1,2586 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>BAUM TenPers BAUM TenPers GRE 330+</title>
+<style>
+:root{--bg:#f3f5f7;--card:#fff;--text:#111827;--muted:#64748b;--line:#d8dee8;--accent:#111827;--good:#0f766e;--bad:#b91c1c;--warn:#b45309}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select{font:inherit} button{cursor:pointer}
+.top{height:64px;background:#111827;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 22px;position:sticky;top:0;z-index:20}
+.brand{font-weight:800}.timer{font-variant-numeric:tabular-nums;font-size:22px;font-weight:800}.wrap{max-width:1260px;margin:auto;padding:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 8px 30px rgba(15,23,42,.06)}
+.grid{display:grid;gap:16px}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}
+h1,h2,h3{margin-top:0}.muted{color:var(--muted)}.btn{border:0;border-radius:12px;padding:11px 16px;background:#111827;color:#fff;font-weight:700}
+.btn.alt{background:#e8edf3;color:#111827}.btn.good{background:#0f766e}.btn.bad{background:#b91c1c}.btn:disabled{opacity:.45;cursor:not-allowed}
+.mode{padding:18px;border:1px solid var(--line);border-radius:16px;background:#fff}.mode:hover{border-color:#111827}
+.exam{display:grid;grid-template-columns:1fr 300px;gap:18px}.question{min-height:520px}.qhead{display:flex;justify-content:space-between;gap:12px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:18px}
+.qtext{white-space:pre-wrap;font-size:19px;line-height:1.55}.choice{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:12px;margin:10px 0;background:#fff}
+.choice.selected{border:2px solid #111827;background:#f8fafc}.palette{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.pbtn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 4px;font-weight:700}
+.pbtn.answered{background:#dbeafe}.pbtn.flagged{outline:3px solid #f59e0b}.pbtn.current{background:#111827;color:#fff}
+.actions{display:flex;gap:8px;justify-content:space-between;margin-top:20px;flex-wrap:wrap}.tag{display:inline-block;padding:5px 9px;border-radius:999px;background:#eef2f7;color:#334155;font-size:12px;font-weight:700;margin-right:5px}
+.resultRow{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}
+.review{padding:14px;border:1px solid var(--line);border-radius:12px;margin:12px 0}.correct{border-color:#0f766e;background:#ecfdf5}.wrong{border-color:#b91c1c;background:#fef2f2}
+.hidden{display:none!important}.progress{height:8px;background:#e5e7eb;border-radius:99px;overflow:hidden}.progress>div{height:100%;background:#111827}
+@media(max-width:850px){.g3,.g2,.exam{grid-template-columns:1fr}.top{height:auto;padding:12px;gap:10px}.timer{font-size:18px}.sidebar{order:-1}.question{min-height:auto}}
+</style>
+<meta name="theme-color" content="#111827"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+
+<style>
+.mvp-shell{max-width:1260px;margin:18px auto 0;padding:0 20px}
+.mvp-hero{background:linear-gradient(135deg,#111827,#1f2937);color:white;border-radius:22px;padding:28px;display:grid;grid-template-columns:1.4fr .8fr;gap:20px;align-items:center}
+.mvp-hero h1{font-size:34px;margin-bottom:8px}
+.mvp-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
+.mvp-kpi{background:white;border:1px solid var(--line);border-radius:16px;padding:16px}
+.mvp-kpi b{font-size:24px;display:block}
+.mvp-card{background:white;border:1px solid var(--line);border-radius:18px;padding:18px}
+.mvp-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.mvp-pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#e2e8f0;color:#334155;font-size:12px;font-weight:800}
+.mvp-onboard{position:fixed;inset:0;background:rgba(15,23,42,.72);display:flex;align-items:center;justify-content:center;padding:20px;z-index:100}
+.mvp-onboard-box{width:min(720px,100%);background:white;border-radius:22px;padding:26px}
+.mvp-onboard-box input,.mvp-onboard-box select{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:6px}
+.mvp-onboard-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.mvp-trend{height:10px;background:#e5e7eb;border-radius:999px;overflow:hidden}
+.mvp-trend>div{height:100%;background:#0f766e}
+.mvp-empty{color:#64748b;font-size:14px}
+.mvp-footer{text-align:center;color:#64748b;padding:24px 0;font-size:12px}
+@media(max-width:850px){
+  .mvp-hero{grid-template-columns:1fr}
+  .mvp-kpis,.mvp-actions,.mvp-onboard-grid{grid-template-columns:1fr}
+}
+</style>
+
+
+<style id="baum-brand-theme">
+:root{
+  --baum-purple:#230078;
+  --baum-purple-2:#35108f;
+  --baum-gold:#ffc533;
+  --baum-gold-2:#f2b51d;
+  --baum-ink:#160d38;
+  --baum-cream:#fff9ea;
+  --baum-white:#ffffff;
+  --baum-soft:#f4efff;
+  --bg:#f7f4fb;
+  --card:#ffffff;
+  --text:#160d38;
+  --muted:#6a6480;
+  --line:#e4def0;
+  --accent:#230078;
+  --good:#177a56;
+  --bad:#b42336;
+  --warn:#b46b00
+}
+body{
+  background:
+    radial-gradient(circle at 10% 0%,rgba(255,197,51,.13),transparent 23rem),
+    radial-gradient(circle at 100% 10%,rgba(35,0,120,.10),transparent 26rem),
+    var(--bg);
+  color:var(--text)
+}
+.top{
+  background:linear-gradient(90deg,var(--baum-purple),var(--baum-purple-2));
+  border-bottom:4px solid var(--baum-gold);
+  min-height:72px;
+  height:auto;
+}
+.baum-brand{display:flex;align-items:center;gap:12px}
+.baum-logo-shell{
+  width:112px;height:44px;background:white;border-radius:9px;padding:3px;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  box-shadow:0 4px 14px rgba(0,0,0,.15)
+}
+.baum-logo-shell img{max-width:100%;max-height:100%;object-fit:contain}
+.baum-wordmark{display:flex;flex-direction:column;line-height:1.05}
+.baum-wordmark strong{font-size:17px;letter-spacing:.02em;color:white}
+.baum-wordmark small{font-size:11px;color:#f8dc82;margin-top:5px;font-weight:700}
+.btn{background:var(--baum-purple)}
+.btn:hover{filter:brightness(1.08)}
+.btn.good{background:var(--baum-gold);color:var(--baum-ink)}
+.btn.alt{background:var(--baum-soft);color:var(--baum-purple);border:1px solid #d7cbed}
+.btn.bad{background:#9e1730}
+.card,.mvp-card,.mode{border-color:#e1d8ef}
+.mvp-hero{
+  background:linear-gradient(135deg,var(--baum-purple) 0%,#34118d 63%,#58319f 100%);
+  border-bottom:6px solid var(--baum-gold);
+  position:relative;overflow:hidden
+}
+.mvp-hero:after{
+  content:"";position:absolute;width:240px;height:240px;border-radius:50%;
+  background:rgba(255,197,51,.13);right:-80px;top:-90px
+}
+.mvp-pill{background:#efe8ff;color:var(--baum-purple)}
+.mvp-hero .mvp-pill{background:var(--baum-gold)!important;color:var(--baum-ink)!important}
+.mvp-trend>div{background:var(--baum-gold)}
+.pbtn.current{background:var(--baum-purple)}
+.pbtn.answered{background:#fff0ba;border-color:#e7c655}
+.choice.selected{border-color:var(--baum-purple);background:#f8f4ff}
+.progress>div{background:linear-gradient(90deg,var(--baum-purple),var(--baum-gold))}
+.baum-credit{
+  text-align:center;padding:22px 10px;color:#6a6480;font-size:12px
+}
+.baum-credit a{color:var(--baum-purple);font-weight:800;text-decoration:none}
+.baum-install-bar{
+  position:fixed;right:18px;bottom:18px;z-index:90;display:flex;gap:8px;flex-wrap:wrap;
+  background:white;border:1px solid #ddd4eb;padding:10px;border-radius:16px;
+  box-shadow:0 12px 38px rgba(35,0,120,.18)
+}
+.baum-install-bar button,.baum-install-bar a{
+  border:0;border-radius:11px;padding:10px 13px;font-weight:800;text-decoration:none;cursor:pointer
+}
+.baum-install-primary{background:var(--baum-gold);color:var(--baum-ink)}
+.baum-install-secondary{background:var(--baum-purple);color:white}
+.baum-about{
+  background:linear-gradient(135deg,#fff9e8,#f4efff);
+  border:1px solid #e3d9ef;border-radius:18px;padding:18px;margin-top:16px
+}
+@media(max-width:700px){
+ .baum-logo-shell{width:88px;height:36px}
+ .baum-wordmark strong{font-size:13px}
+ .baum-wordmark small{font-size:9px}
+ .top{padding:9px 11px}
+ .baum-install-bar{left:10px;right:10px;bottom:10px;justify-content:center}
+}
+</style>
+
+
+<style id="baum-auth-share">
+.auth-overlay{
+  position:fixed;inset:0;background:linear-gradient(135deg,rgba(35,0,120,.96),rgba(71,34,151,.95));
+  z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px
+}
+.auth-card{width:min(560px,100%);background:white;border-radius:24px;padding:26px;box-shadow:0 30px 80px rgba(0,0,0,.28)}
+.auth-tabs{display:flex;gap:8px;margin:14px 0}
+.auth-tabs button{flex:1;border:0;border-radius:12px;padding:11px;font-weight:800;background:#f1ecfa;color:#230078}
+.auth-tabs button.active{background:#230078;color:white}
+.auth-card input{width:100%;padding:12px;border:1px solid #ddd4eb;border-radius:12px;margin:6px 0 12px}
+.auth-note{font-size:12px;color:#6a6480}
+.user-chip{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.24);padding:8px 10px;border-radius:999px;color:white}
+.chrome-install-card{background:linear-gradient(135deg,#fff8df,#f4efff);border:1px solid #e7dcbf;border-radius:18px;padding:18px;margin-top:16px}
+.chrome-icon{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#db4437 0 33%,#f4b400 0 66%,#0f9d58 0);position:relative}
+.chrome-icon:after{content:"";width:18px;height:18px;border-radius:50%;background:#4285f4;border:4px solid white}
+.share-box{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.share-url{flex:1;min-width:220px;border:1px solid #ddd4eb;border-radius:12px;padding:11px;background:white}
+@media(max-width:700px){.user-chip{font-size:11px}.auth-card{padding:20px}}
+</style>
+
+
+<style id="baum-secure-exam-css">
+html,body{ -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
+input,textarea{ -webkit-user-select:text; user-select:text; }
+.qtext,.choice,.review,.question,#choices{ -webkit-user-select:none!important; user-select:none!important; }
+@media print{
+  body *{visibility:hidden!important}
+  body:before{
+    content:"Protected BAUM TenPers GRE examination content — printing disabled.";
+    visibility:visible!important;position:fixed;inset:0;display:grid;place-items:center;
+    font:700 24px/1.4 Segoe UI,Arial;color:#230078;background:white;padding:40px;text-align:center
+  }
+}
+.secure-bank-gate{
+  position:fixed;inset:0;z-index:12000;background:linear-gradient(135deg,#230078,#4b2aa0);
+  color:white;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px
+}
+.secure-bank-card{max-width:520px}
+.secure-spinner{width:42px;height:42px;border:4px solid rgba(255,255,255,.25);border-top-color:#ffc533;border-radius:50%;margin:18px auto;animation:btspin .9s linear infinite}
+@keyframes btspin{to{transform:rotate(360deg)}}
+.secure-focus-shield{
+  position:fixed;inset:0;z-index:11000;background:#160d38;color:white;display:none;
+  align-items:center;justify-content:center;text-align:center;padding:30px
+}
+.secure-focus-shield.active{display:flex}
+.secure-focus-shield .inner{max-width:600px}
+.watermark-layer{
+  pointer-events:none;position:fixed;inset:0;z-index:80;overflow:hidden;display:none;opacity:.10
+}
+body.exam-active .watermark-layer{display:block}
+.watermark-layer .wm{
+  position:absolute;transform:rotate(-24deg);font-weight:900;font-size:18px;white-space:nowrap;color:#230078
+}
+.secure-toast{
+  position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:13000;
+  background:#160d38;color:white;border:1px solid #ffc533;border-radius:12px;padding:10px 14px;
+  font-weight:700;display:none
+}
+</style>
+
+
+<style id="baum-test-selector-css">
+.test-select-panel{
+  background:linear-gradient(135deg,#fff9ea,#f4efff);
+  border:1px solid #e0d4ef;border-radius:18px;padding:18px;margin-top:16px
+}
+.test-select-grid{display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:12px;align-items:end}
+.test-select-grid label{font-size:12px;font-weight:800;color:#5d5573}
+.test-select-grid select{width:100%;margin-top:6px;border:1px solid #d8cee7;border-radius:12px;padding:12px;background:white;color:#160d38;font-weight:700}
+.test-mode-note{font-size:12px;color:#6a6480;margin-top:8px}
+@media(max-width:850px){.test-select-grid{grid-template-columns:1fr}}
+</style>
+
+
+<style id="baum-adaptive-v23-css">
+.adaptive-status{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.adaptive-status>div{background:#fff;border:1px solid #e0d4ef;border-radius:12px;padding:10px}
+.adaptive-status strong{display:block;font-size:11px;color:#6a6480;text-transform:uppercase;letter-spacing:.04em}
+.adaptive-status span{display:block;margin-top:4px;font-weight:850;color:#230078}
+.adaptive-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;background:#fff0c2;color:#230078;font-size:11px;font-weight:900}
+.adaptive-result{background:linear-gradient(135deg,#230078,#5a35a5);color:#fff;border-radius:16px;padding:16px;margin:14px 0}
+.adaptive-result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.adaptive-result-grid div{background:rgba(255,255,255,.11);padding:10px;border-radius:10px}
+@media(max-width:750px){.adaptive-status,.adaptive-result-grid{grid-template-columns:1fr 1fr}}
+</style>
+
+
+<style id="baum-v24-analytics-css">
+.analytics-panel{
+  background:#fff;border:1px solid #e0d7ef;border-radius:20px;padding:18px;margin-top:16px
+}
+.analytics-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.analytics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+.analytics-kpi{background:linear-gradient(135deg,#f8f4ff,#fffaf0);border:1px solid #e7def3;border-radius:14px;padding:14px}
+.analytics-kpi span{display:block;color:#6a6480;font-size:12px;font-weight:800}
+.analytics-kpi strong{display:block;color:#230078;font-size:26px;margin-top:5px}
+.analytics-two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.analytics-card{border:1px solid #e7def3;border-radius:14px;padding:14px;background:white}
+.skill-row{display:grid;grid-template-columns:1.4fr .7fr .7fr;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid #eee8f5}
+.skill-row:last-child{border-bottom:0}
+.skill-bar{height:8px;background:#eee8f5;border-radius:999px;overflow:hidden;margin-top:5px}
+.skill-bar>div{height:100%;background:linear-gradient(90deg,#230078,#ffc533)}
+.priority-high{color:#b42336;font-weight:900}
+.priority-med{color:#b46b00;font-weight:900}
+.priority-low{color:#177a56;font-weight:900}
+.diagnostic-callout{
+  margin-top:14px;border-radius:16px;padding:16px;
+  background:linear-gradient(135deg,#230078,#5530a5);color:white
+}
+.diagnostic-callout b{color:#ffc533}
+.analytics-empty{color:#77708a;font-size:13px;padding:12px 0}
+@media(max-width:850px){
+  .analytics-grid,.analytics-two{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .analytics-grid,.analytics-two{grid-template-columns:1fr}
+  .skill-row{grid-template-columns:1fr}
+}
+</style>
+
+
+<style id="baum-v25-plan-css">
+.study-plan-panel{background:linear-gradient(135deg,#fffaf0,#f5f0ff);border:1px solid #dfd3ef;border-radius:20px;padding:18px;margin-top:16px}
+.plan-form{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.plan-form label{font-size:11px;font-weight:900;color:#625879;text-transform:uppercase}
+.plan-form input,.plan-form select{width:100%;box-sizing:border-box;margin-top:5px;padding:11px;border:1px solid #d9cee8;border-radius:11px;background:white}
+.plan-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.plan-kpi{background:#fff;border:1px solid #e6dcef;border-radius:13px;padding:12px}
+.plan-kpi small{display:block;color:#706782}.plan-kpi strong{display:block;font-size:23px;color:#230078;margin-top:4px}
+.week-card{background:#fff;border:1px solid #e5dcef;border-radius:14px;padding:14px;margin-top:10px}
+.week-card h4{margin:0 0 7px;color:#230078}.day-chip{display:inline-block;background:#f1eaff;border-radius:999px;padding:5px 8px;margin:3px;font-size:11px;font-weight:800}
+.plan-focus{border-left:4px solid #ffc533;padding-left:10px;margin:8px 0;color:#4e4661}
+@media(max-width:850px){.plan-form,.plan-summary{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.plan-form,.plan-summary{grid-template-columns:1fr}}
+</style>
+
+
+<style id="baum-v26-cloud-css">
+.cloud-card{background:linear-gradient(135deg,#eef9ff,#f7f1ff);border:1px solid #d6dfef;border-radius:18px;padding:16px;margin-top:14px}
+.cloud-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
+.cloud-status{display:inline-flex;align-items:center;gap:7px;font-weight:900;font-size:12px}
+.cloud-dot{width:9px;height:9px;border-radius:50%;background:#b58a00}
+.cloud-dot.online{background:#16865d}.cloud-dot.offline{background:#b42336}
+.sync-pill{display:inline-block;padding:5px 9px;border-radius:999px;background:#fff;border:1px solid #dcd5e8;font-size:11px;font-weight:800;margin:3px}
+@media(max-width:650px){.cloud-row{grid-template-columns:1fr}}
+</style>
+
+
+<style id="baum-v27-bank-css">
+.bank-security-card{background:linear-gradient(135deg,#f5f0ff,#fff9e8);border:1px solid #ddd1ee;border-radius:18px;padding:16px;margin-top:14px}
+.bank-security-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
+.bank-mode{font-size:12px;font-weight:900;color:#230078}
+.bank-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#b58a00;margin-right:6px}
+.bank-dot.live{background:#16865d}
+@media(max-width:650px){.bank-security-row{grid-template-columns:1fr}}
+</style>
+
+
+<style id="baum-v28-quality-css">
+.quality-panel{background:linear-gradient(135deg,#fff,#f6f1ff);border:1px solid #ded4ec;border-radius:18px;padding:16px;margin-top:14px}
+.quality-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.quality-kpi{background:#fff;border:1px solid #e8e0f1;border-radius:13px;padding:12px}
+.quality-kpi small{display:block;color:#71677f;font-weight:800}.quality-kpi strong{display:block;color:#230078;font-size:24px;margin-top:4px}
+.quality-list{margin-top:12px}.quality-item{display:grid;grid-template-columns:1.4fr .6fr .6fr .6fr;gap:8px;padding:9px 0;border-bottom:1px solid #eee7f5;font-size:12px}
+.qflag{font-weight:900;color:#b42336}.qgood{font-weight:900;color:#177a56}
+@media(max-width:700px){.quality-grid{grid-template-columns:1fr 1fr}.quality-item{grid-template-columns:1fr 1fr}}
+</style>
+
+
+<style id="baum-v29-simulation-css">
+.sim-panel{background:linear-gradient(135deg,#f8f3ff,#fff9e8);border:1px solid #ddd1ed;border-radius:18px;padding:16px;margin-top:14px}
+.sim-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.sim-kpi{background:#fff;border:1px solid #e7def0;border-radius:13px;padding:12px}
+.sim-kpi small{display:block;color:#706680;font-weight:800}.sim-kpi strong{display:block;color:#230078;font-size:21px;margin-top:4px}
+.sim-banner{display:none;position:sticky;top:0;z-index:95;background:#160d38;color:#fff;padding:9px 12px;border-bottom:2px solid #ffc533}
+body.gre-simulation-active .sim-banner{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.sim-progress{height:6px;background:rgba(255,255,255,.18);border-radius:999px;overflow:hidden;min-width:130px}
+.sim-progress>div{height:100%;background:#ffc533;width:0}
+.sim-break{position:fixed;inset:0;z-index:14000;background:#160d38;color:white;display:none;align-items:center;justify-content:center;text-align:center;padding:24px}
+.sim-break.active{display:flex}.sim-break-card{max-width:520px}.sim-break-time{font-size:42px;font-weight:900;color:#ffc533}
+@media(max-width:700px){.sim-grid{grid-template-columns:1fr 1fr}}
+</style>
+
+
+<style id="baum-v30-institutional-css">
+.institution-panel{background:linear-gradient(135deg,#230078,#50309b);color:#fff;border-radius:20px;padding:18px;margin-top:16px}
+.institution-panel .muted{color:#e5dcf7}
+.inst-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.inst-kpi{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:13px}
+.inst-kpi small{display:block;color:#e7def7;font-weight:800}.inst-kpi strong{display:block;color:#ffc533;font-size:24px;margin-top:4px}
+.inst-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.inst-actions button{border:0;border-radius:11px;padding:10px 13px;font-weight:900;cursor:pointer}
+.inst-primary{background:#ffc533;color:#160d38}.inst-secondary{background:white;color:#230078}
+.admin-drawer{position:fixed;inset:0;z-index:15000;background:rgba(15,8,35,.72);display:none;align-items:center;justify-content:center;padding:20px}
+.admin-drawer.active{display:flex}
+.admin-card{width:min(920px,96vw);max-height:88vh;overflow:auto;background:white;color:#211737;border-radius:20px;padding:20px}
+.admin-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:12px}
+.admin-table th,.admin-table td{padding:9px;border-bottom:1px solid #eee7f5;text-align:left}
+.cohort-chip{display:inline-block;background:#f1eaff;color:#230078;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:900}
+@media(max-width:760px){.inst-grid{grid-template-columns:1fr 1fr}}
+</style>
+
+
+<style id="student-dashboard-clean-css">
+.student-dash-launch{background:linear-gradient(135deg,#230078,#51309a);color:white;border-radius:20px;padding:18px;margin-top:16px}
+.student-dash-launch p{color:#e8e0f7}
+.student-dashboard-overlay{position:fixed;inset:0;z-index:16000;background:rgba(15,8,35,.76);display:none;align-items:flex-start;justify-content:center;padding:24px;overflow:auto}
+.student-dashboard-overlay.active{display:flex}
+.student-dashboard-shell{width:min(1100px,97vw);background:#f8f6fb;border-radius:22px;padding:20px;color:#211737}
+.student-dashboard-head{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap}
+.student-dashboard-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:15px}
+.student-dashboard-card{background:white;border:1px solid #e5dcef;border-radius:15px;padding:14px}
+.student-dashboard-card small{display:block;color:#71677f;font-weight:800}.student-dashboard-card strong{display:block;color:#230078;font-size:25px;margin-top:5px}
+.student-dashboard-two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.student-dashboard-section{background:white;border:1px solid #e5dcef;border-radius:15px;padding:15px}
+@media(max-width:800px){.student-dashboard-grid,.student-dashboard-two{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.student-dashboard-grid,.student-dashboard-two{grid-template-columns:1fr}}
+</style>
+
+
+<style id="baum-sidebar-clean-css">
+.sidebar-toggle{
+  position:fixed;left:16px;top:86px;z-index:17020;
+  width:48px;height:48px;border:0;border-radius:14px;
+  background:#230078;color:#fff;font-size:24px;font-weight:900;
+  box-shadow:0 10px 28px rgba(35,0,120,.28);cursor:pointer;
+}
+.sidebar-backdrop{
+  position:fixed;inset:0;background:rgba(17,10,37,.50);
+  z-index:17000;display:none;
+}
+.sidebar-backdrop.active{display:block}
+.baum-sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:min(390px,92vw);
+  z-index:17010;background:#f8f6fb;color:#211737;
+  transform:translateX(-105%);transition:transform .24s ease;
+  box-shadow:18px 0 44px rgba(18,10,39,.22);
+  overflow-y:auto;padding:18px;
+}
+.baum-sidebar.open{transform:translateX(0)}
+.baum-sidebar-head{
+  display:flex;justify-content:space-between;gap:12px;align-items:center;
+  border-bottom:1px solid #e4dbed;padding-bottom:13px;margin-bottom:14px
+}
+.baum-sidebar-head h2{margin:0;color:#230078;font-size:21px}
+.baum-sidebar-close{
+  width:38px;height:38px;border:0;border-radius:10px;
+  background:#eee8f5;color:#230078;font-size:22px;font-weight:900;cursor:pointer
+}
+.sidebar-menu-card{
+  border:1px solid #e3daec;background:white;border-radius:15px;
+  margin:10px 0;overflow:hidden
+}
+.sidebar-menu-button{
+  width:100%;border:0;background:white;text-align:left;padding:14px;
+  color:#230078;font-weight:900;cursor:pointer;
+  display:flex;justify-content:space-between;gap:8px;align-items:center
+}
+.sidebar-menu-button:hover{background:#f7f2ff}
+.sidebar-section-content{
+  display:none;border-top:1px solid #eee7f5;padding:12px;background:#fcfbfe
+}
+.sidebar-section-content.open{display:block}
+.sidebar-section-content > *{margin-top:0!important}
+.sidebar-section-content .student-dash-launch,
+.sidebar-section-content .institution-panel,
+.sidebar-section-content .bank-security-card,
+.sidebar-section-content .cloud-card{
+  margin:0!important;border-radius:12px!important
+}
+.sidebar-note{font-size:12px;color:#706680;line-height:1.45;margin:6px 0 14px}
+@media(max-width:700px){
+  .sidebar-toggle{left:10px;top:76px;width:44px;height:44px}
+}
+</style>
+
+
+<style id="baum-routed-pages-css">
+body.baum-test-route #sidebarToggle,
+body.baum-test-route #baumSidebar,
+body.baum-test-route #sidebarBackdrop{display:none!important}
+body.baum-test-route #home > *{display:none!important}
+body.baum-test-route #home #testHubPanel,
+body.baum-test-route #home #testModeCards,
+body.baum-test-route #home #custom,
+body.baum-test-route #home #savedProgressCard,
+body.baum-test-route #home #routeTestHeader{display:block!important}
+body.baum-test-route #home #testModeCards{display:grid!important}
+#routeTestHeader{display:none}
+.route-test-header{background:linear-gradient(135deg,#230078,#51309a);color:#fff;border-radius:18px;padding:18px;margin-bottom:16px}
+.route-test-header p{color:#e9e1f7;margin:5px 0 0}
+.route-test-header a{color:#ffc533;font-weight:900;text-decoration:none}
+body:not(.baum-test-route) #testHubPanel,
+body:not(.baum-test-route) #testModeCards,
+body:not(.baum-test-route) #custom,
+body:not(.baum-test-route) #savedProgressCard{display:none!important}
+body.baum-student-route #home{display:none!important}
+body.baum-institution-route #home{display:none!important}
+body.baum-security-route #home{display:none!important}
+body.baum-account-route #home{display:none!important}
+</style>
+
+<link rel="stylesheet" href="auth-gate.css">
+<script src="auth-gate.js" defer></script>
+<meta name="application-name" content="BAUM TenPers GRE 330+"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<link rel="stylesheet" href="baum-shell.css">
+<script src="baum-shell.js" defer></script>
+<style id="bt-old-sidebar-kill">
+#sidebarToggle,#sidebarBackdrop,#baumSidebar,.sidebar-toggle,.sidebar-backdrop,.baum-sidebar{display:none!important}
+</style>
+</head>
+<body>
+
+<div id="studentDashboardOverlay" class="student-dashboard-overlay">
+ <div class="student-dashboard-shell">
+  <div class="student-dashboard-head">
+   <div><div class="mvp-pill">STUDENT DASHBOARD</div><h2 style="margin:7px 0 0">My GRE Performance</h2><p class="muted" style="margin:4px 0 0">Personal progress and study diagnostics.</p></div>
+   <button class="btn alt" onclick="closeStudentDashboard()">Close</button>
+  </div>
+  <div class="student-dashboard-grid">
+   <div class="student-dashboard-card"><small>Quant accuracy</small><strong id="sdQuantAcc">--</strong></div>
+   <div class="student-dashboard-card"><small>Verbal accuracy</small><strong id="sdVerbalAcc">--</strong></div>
+   <div class="student-dashboard-card"><small>Estimated Quant</small><strong id="sdQuantScore">--</strong></div>
+   <div class="student-dashboard-card"><small>Estimated Verbal</small><strong id="sdVerbalScore">--</strong></div>
+  </div>
+  <div class="student-dashboard-two">
+   <div class="student-dashboard-section"><h3>Weakest Skills</h3><div id="sdWeakSkills">Complete more questions to build your profile.</div></div>
+   <div class="student-dashboard-section"><h3>Difficulty Performance</h3><div id="sdDifficulty">No statistics yet.</div></div>
+  </div>
+  <div class="student-dashboard-two">
+   <div class="student-dashboard-section"><h3>Recent Score Trend</h3><div id="sdTrend">No completed test history yet.</div></div>
+   <div class="student-dashboard-section"><h3>Recommended Focus</h3><div id="sdFocus">Complete a test to generate recommendations.</div></div>
+  </div>
+  <div id="sdDiagnostic" class="diagnostic-callout" style="margin-top:14px"><b>330+ diagnostic:</b> complete timed or adaptive sessions to build a stable recommendation.</div>
+ </div>
+</div>
+
+
+<div id="greSimBanner" class="sim-banner">
+  <div><b>BAUM FULL GRE SIMULATION</b> · <span id="simSectionLabel">Section</span></div>
+  <div class="sim-progress"><div id="simProgressBar"></div></div>
+  <div id="simClockLabel">--:--</div>
+</div>
+
+<div id="simBreakScreen" class="sim-break">
+  <div class="sim-break-card">
+    <div class="mvp-pill" style="background:#ffc533;color:#160d38">SCHEDULED BREAK</div>
+    <h2>Full GRE Simulation</h2>
+    <p>Your completed section is locked. Continue when you are ready.</p>
+    <div id="simBreakClock" class="sim-break-time">10:00</div>
+    <button class="btn" onclick="btEndBreak()">Continue Test</button>
+  </div>
+</div>
+
+
+<div id="secureBankGate" class="secure-bank-gate">
+  <div class="secure-bank-card">
+    <div class="mvp-pill" style="background:#ffc533;color:#160d38">SECURE QUESTION BANK</div>
+    <h2 style="margin:14px 0 0">Decrypting BAUM GRE examination content…</h2>
+    <div class="secure-spinner"></div>
+    <p style="color:#ddd3ff">Questions are loaded into memory only after the secure bank is unlocked in the browser.</p>
+  </div>
+</div>
+<div id="focusShield" class="secure-focus-shield">
+  <div class="inner">
+    <h2>Protected test content hidden</h2>
+    <p>This exam is hidden when the app loses focus. Return to the test window to continue.</p>
+  </div>
+</div>
+<div id="watermarkLayer" class="watermark-layer"></div>
+<div id="secureToast" class="secure-toast">Protected test content cannot be copied.</div>
+
+
+<div id="baumAuthGate" class="auth-overlay">
+  <div class="auth-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+      <div>
+        <div class="mvp-pill">BAUM TenPers GRE 330+</div>
+        <h2 style="margin:10px 0 4px">Student Account</h2>
+        <p class="muted" style="margin:0">Create an account or sign in to continue.</p>
+      </div>
+    </div>
+    <div class="auth-tabs">
+      <button id="loginTab" class="active" onclick="showAuthMode('login')">Login</button>
+      <button id="signupTab" onclick="showAuthMode('signup')">Create Account</button>
+    </div>
+    <div id="authNameWrap" class="hidden">
+      <label>Full name<input id="authName" autocomplete="name" placeholder="Student name"></label>
+    </div>
+    <label>Email<input id="authEmail" type="email" autocomplete="email" placeholder="student@example.com"></label>
+    <label>Password<input id="authPassword" type="password" autocomplete="current-password" placeholder="Minimum 6 characters"></label>
+    <button id="authSubmitBtn" class="btn" style="width:100%" onclick="submitAuth()">Login</button>
+    <p id="authMessage" class="auth-note"></p>
+    <p class="auth-note">Your BAUM TenPers GRE account is securely authenticated through our cloud service and can be used across supported devices.
+   </p>
+  </div>
+</div>
+
+
+<div id="mvpOnboard" class="mvp-onboard hidden">
+  <div class="mvp-onboard-box">
+    <span class="mvp-pill">MVP SETUP</span>
+    <h2 style="margin-top:12px">Set your GRE goal</h2>
+    <p class="muted">This takes less than a minute. Your plan is stored only on this device.</p>
+    <div class="mvp-onboard-grid">
+      <label>Name<input id="mvpName" placeholder="Your name"></label>
+      <label>Target score<select id="mvpTarget"><option>320</option><option>325</option><option selected>330</option><option>335</option><option>340</option></select></label>
+      <label>Test date<input id="mvpDate" type="date"></label>
+      <label>Study days / week<select id="mvpDays"><option>4</option><option selected>5</option><option>6</option><option>7</option></select></label>
+    </div>
+    <button class="btn" style="margin-top:18px;width:100%" onclick="saveMvpProfile()">Create My Study Plan</button>
+  </div>
+</div>
+
+
+<div style="max-width:1260px;margin:10px auto;padding:0 20px">
+  <div class="mvp-card" style="border-left:5px solid #ffc533">
+    <b>Expanded Question Bank: 5,000 questions</b>
+    <span class="muted"> · 2,500 Quant · 2,500 Verbal · Reading Comprehension · Text Completion · Sentence Equivalence · Algebra · Arithmetic · Geometry · Data Analysis · Probability · Statistics · Quantitative Comparison</span>
+  </div>
+</div>
+
+<div class="mvp-shell" id="mvpDashboard">
+  <div class="mvp-hero">
+    <div>
+      <span class="mvp-pill" style="background:#334155;color:white">BAUM TenPers BAUM TenPers GRE 330+</span>
+      <h1 id="mvpGreeting">Your focused 330 study system</h1>
+      <p style="color:#cbd5e1;max-width:760px">Practice. Time. Review. Improve. The MVP keeps only the features that matter most for a strong GRE score: targeted drills, timed CBT sections, full simulation, detailed review, and progress tracking.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+        <button class="btn good" onclick="startTodayPlan()">Start Today's Plan</button>
+        <button class="btn alt" onclick="openDiagnostic()">Take Diagnostic</button>
+      </div>
+    </div>
+    <div class="mvp-card" style="background:#0f172a;border-color:#334155;color:white">
+      <div style="color:#94a3b8;font-size:13px">Target</div>
+      <div id="mvpTargetDisplay" style="font-size:42px;font-weight:900">330</div>
+      <div id="mvpCountdown" style="color:#cbd5e1;margin-top:6px">Set test date</div>
+      <div class="mvp-trend" style="margin-top:14px;background:#334155"><div id="mvpGoalProgress" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="mvp-kpis">
+    <div class="mvp-kpi"><span class="muted">Sessions</span><b id="mvpSessions">0</b><small>completed</small></div>
+    <div class="mvp-kpi"><span class="muted">Average accuracy</span><b id="mvpAccuracy">--</b><small>across sessions</small></div>
+    <div class="mvp-kpi"><span class="muted">Best practice score</span><b id="mvpBest">--</b><small>estimated</small></div>
+    <div class="mvp-kpi"><span class="muted">Current streak</span><b id="mvpStreak">0</b><small>days</small></div>
+  </div>
+
+  
+
+
+
+
+
+
+
+<div class="student-dash-launch">
+  <h3 style="margin:0 0 5px">Student Dashboard</h3>
+  <p style="margin:0">View your performance, estimated scores, weaknesses, difficulty performance, recent test history and recommended study focus in one place.</p>
+  <button class="btn" style="margin-top:12px" onclick="openStudentDashboard()">Open Student Dashboard</button>
+</div>
+
+<div class="institution-panel" id="institutionPlatform">
+  <div class="mvp-pill" style="background:#ffc533;color:#160d38">INSTITUTIONAL PLATFORM</div>
+  <h3 style="margin:9px 0 3px">BAUM TenPers GRE — Instructor & Cohort Management</h3>
+  <p class="muted" style="margin:0">Foundation for student cohorts, assignments, mock examinations, institutional analytics and instructor reporting.</p>
+  <div class="inst-grid">
+    <div class="inst-kpi"><small>Student profiles</small><strong id="instStudents">1</strong></div>
+    <div class="inst-kpi"><small>Tests recorded</small><strong id="instTests">0</strong></div>
+    <div class="inst-kpi"><small>Assignments</small><strong id="instAssignments">0</strong></div>
+    <div class="inst-kpi"><small>Average estimate</small><strong id="instAvg">--</strong></div>
+  </div>
+  <div class="inst-actions">
+    <button class="inst-primary" onclick="openInstructorDashboard()">Instructor Dashboard</button>
+    <button class="inst-secondary" onclick="createPracticeAssignment()">Create Assignment</button>
+    <button class="inst-secondary" onclick="exportInstitutionReport()">Export Report</button>
+  </div>
+</div>
+
+<div id="adminDrawer" class="admin-drawer">
+  <div class="admin-card">
+    <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
+      <div><span class="cohort-chip">BAUM TENPERS INSTITUTE</span><h2 style="margin:7px 0 0">Instructor Dashboard</h2></div>
+      <button class="btn alt" onclick="closeInstructorDashboard()">Close</button>
+    </div>
+    <div class="analytics-grid">
+      <div class="analytics-kpi"><span>Active student</span><strong id="admStudent">--</strong></div>
+      <div class="analytics-kpi"><span>Completed sessions</span><strong id="admSessions">0</strong></div>
+      <div class="analytics-kpi"><span>Quant estimate</span><strong id="admQ">--</strong></div>
+      <div class="analytics-kpi"><span>Verbal estimate</span><strong id="admV">--</strong></div>
+    </div>
+    <h3>Recent Student Activity</h3>
+    <div id="admActivity" class="analytics-empty">No activity recorded yet.</div>
+    <h3>Assignments</h3>
+    <div id="admAssignments" class="analytics-empty">No assignments created yet.</div>
+  </div>
+</div>
+
+<div class="sim-panel" id="fullGreSimulationPanel">
+  <div class="mvp-pill">FULL GRE SIMULATION</div>
+  <h3 style="margin:8px 0 3px">Test-Day Simulation Mode</h3>
+  <p class="muted" style="margin:0">Dedicated full-length mode with section sequencing, timed progression, scheduled break, review tracking and unanswered-question checks.</p>
+  <div class="sim-grid">
+    <div class="sim-kpi"><small>Quant</small><strong>27 questions</strong></div>
+    <div class="sim-kpi"><small>Verbal</small><strong>27 questions</strong></div>
+    <div class="sim-kpi"><small>Core timed work</small><strong>88 min</strong></div>
+    <div class="sim-kpi"><small>Break</small><strong>10 min</strong></div>
+  </div>
+  <button class="btn" style="margin-top:12px" onclick="startFullGreSimulation()">Start Full GRE Simulation</button>
+</div>
+
+<div class="quality-panel" id="questionQualityPanel">
+  <div class="mvp-pill">QUESTION QUALITY INTELLIGENCE</div>
+  <h3 style="margin:8px 0 3px">Question Bank Quality Monitor</h3>
+  <p class="muted" style="margin:0">Tracks empirical difficulty, response volume, success rate and potential low-quality items as students use the app.</p>
+  <div class="quality-grid">
+    <div class="quality-kpi"><small>Questions observed</small><strong id="qObs">0</strong></div>
+    <div class="quality-kpi"><small>Responses recorded</small><strong id="qResp">0</strong></div>
+    <div class="quality-kpi"><small>Items needing review</small><strong id="qFlag">0</strong></div>
+    <div class="quality-kpi"><small>Quality coverage</small><strong id="qCoverage">0%</strong></div>
+  </div>
+  <div id="qQualityList" class="quality-list muted" style="font-size:12px">Complete tests to generate item-quality statistics.</div>
+</div>
+
+<div class="bank-security-card" id="serverBankPanel">
+  <div class="bank-security-row">
+    <div>
+      <div class="mvp-pill">QUESTION DELIVERY SECURITY</div>
+      <h3 style="margin:8px 0 4px">Server-Side Question Bank Ready</h3>
+      <div class="bank-mode"><span id="bankModeDot" class="bank-dot"></span><span id="bankModeText">Protected cloud delivery required</span></div>
+      <p class="muted" style="margin:7px 0 0">Production mode can request only the questions needed for the current test session instead of exposing the entire bank to the browser.</p>
+    </div>
+  </div>
+</div>
+
+<div class="cloud-card" id="cloudAccountPanel">
+  <div class="cloud-row">
+    <div>
+      <div class="mvp-pill">CLOUD ACCOUNT FOUNDATION</div>
+      <h3 style="margin:8px 0 3px">Student Sync & Account Portability</h3>
+      <div class="cloud-status"><span id="cloudDot" class="cloud-dot"></span><span id="cloudStatusText">Checking connection…</span></div>
+      <p class="muted" style="margin:7px 0 0">Your GRE profile is prepared for secure cross-device synchronization. Local progress continues to work offline.</p>
+    </div>
+    <button class="btn alt" onclick="exportStudentProfile()">Export My Progress</button>
+  </div>
+  <div style="margin-top:10px">
+    <span class="sync-pill">Test history</span>
+    <span class="sync-pill">Weakness analytics</span>
+    <span class="sync-pill">Adaptive ability</span>
+    <span class="sync-pill">Study plan</span>
+    <span class="sync-pill">Bookmarks</span>
+  </div>
+</div>
+
+<div class="study-plan-panel" id="personalStudyPlan">
+  <div class="mvp-pill">PERSONALIZED 330+ PLAN</div>
+  <h3 style="margin:8px 0 3px">Build My GRE Study Plan</h3>
+  <p class="muted" style="margin:0">Set your exam date, current score, target and weekly availability. The plan uses your stored weakness analytics to prioritize study.</p>
+
+  <div class="plan-form">
+    <label>GRE test date<input id="planDate" type="date"></label>
+    <label>Current total score<input id="planCurrent" type="number" min="260" max="340" value="300"></label>
+    <label>Target score<input id="planTarget" type="number" min="260" max="340" value="330"></label>
+    <label>Hours per week<select id="planHours"><option>5</option><option selected>10</option><option>15</option><option>20</option><option>25</option></select></label>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+    <button class="btn" onclick="generateStudyPlan()">Generate Personalized Plan</button>
+    <button class="btn alt" onclick="saveStudyPlan()">Save Plan</button>
+  </div>
+  <div id="planOutput" class="analytics-empty">Generate a plan to begin.</div>
+</div>
+
+<div class="analytics-panel" id="performanceAnalytics" style="display:none">
+  <div class="analytics-head">
+    <div>
+      <div class="mvp-pill">PERFORMANCE ANALYTICS</div>
+      <h3 style="margin:8px 0 3px">Score & Weakness Diagnostics</h3>
+      <p class="muted" style="margin:0">Tracks accuracy, question difficulty, skill weaknesses, and estimated score progression.</p>
+    </div>
+    <button class="btn alt" onclick="renderAdvancedAnalytics()">Refresh Analytics</button>
+  </div>
+
+  <div class="analytics-grid">
+    <div class="analytics-kpi"><span>Quant accuracy</span><strong id="anaQuantAcc">--</strong></div>
+    <div class="analytics-kpi"><span>Verbal accuracy</span><strong id="anaVerbalAcc">--</strong></div>
+    <div class="analytics-kpi"><span>Estimated Quant</span><strong id="anaQuantScore">--</strong></div>
+    <div class="analytics-kpi"><span>Estimated Verbal</span><strong id="anaVerbalScore">--</strong></div>
+  </div>
+
+  <div class="analytics-two">
+    <div class="analytics-card">
+      <h3 style="margin-top:0">Weakest Skills</h3>
+      <div id="anaWeakSkills" class="analytics-empty">Complete more questions to build a diagnostic profile.</div>
+    </div>
+    <div class="analytics-card">
+      <h3 style="margin-top:0">Difficulty Performance</h3>
+      <div id="anaDifficulty" class="analytics-empty">No difficulty statistics yet.</div>
+    </div>
+  </div>
+
+  <div class="analytics-two">
+    <div class="analytics-card">
+      <h3 style="margin-top:0">Recent Score Trend</h3>
+      <div id="anaTrend" class="analytics-empty">No completed score history yet.</div>
+    </div>
+    <div class="analytics-card">
+      <h3 style="margin-top:0">Recommended Focus</h3>
+      <div id="anaFocus" class="analytics-empty">Complete a timed or adaptive test to generate recommendations.</div>
+    </div>
+  </div>
+
+  <div id="anaDiagnostic" class="diagnostic-callout">
+    <b>330+ diagnostic:</b> complete at least 3 timed/adaptive sessions for a more stable recommendation.
+  </div>
+</div>
+
+<div class="mvp-actions">
+    <div class="mvp-card">
+      <span class="mvp-pill">DAILY</span>
+      <h3 style="margin-top:10px">Targeted Practice</h3>
+      <p class="muted">20-question mixed set weighted toward harder material.</p>
+      <button class="btn" onclick="startTodayPlan()">Start 20 Questions</button>
+    </div>
+    <div class="mvp-card">
+      <span class="mvp-pill">TIMED</span>
+      <h3 style="margin-top:10px">CBT Section</h3>
+      <p class="muted">Practice a realistic Quant or Verbal timed section.</p>
+      <button class="btn" onclick="startPreset('section')">Start Timed Section</button>
+    </div>
+    <div class="mvp-card">
+      <span class="mvp-pill">MOCK</span>
+      <h3 style="margin-top:10px">Full Simulation</h3>
+      <p class="muted">54-question Quant + Verbal simulation with automatic review.</p>
+      <button class="btn" onclick="startPreset('full')">Start Full Simulation</button>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:16px">
+    <div class="mvp-card">
+      <h3>Weak Areas</h3>
+      <div id="mvpWeak" class="mvp-empty">Complete a session to identify weak areas.</div>
+    </div>
+    <div class="mvp-card">
+      <h3>Recent Activity</h3>
+      <div id="mvpRecent" class="mvp-empty">No completed sessions yet.</div>
+    </div>
+  </div>
+  
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+    <button class="btn good" onclick="installWithChrome()">Install with Google Chrome</button>
+    <button class="btn alt" onclick="showChromeHelp()">Chrome install help</button>
+  </div>
+
+  <hr style="border:0;border-top:1px solid #e7deef;margin:18px 0">
+  <h3 style="margin:0 0 4px">Share BAUM GRE with a friend</h3>
+  <p class="muted" style="margin:0">The share link automatically uses the public address where this app is hosted.</p>
+  <div class="share-box">
+    <input id="friendShareLink" class="share-url" readonly>
+    <button class="btn" onclick="copyFriendLink()">Copy Web Link</button>
+    <button class="btn alt" onclick="shareFriendLink()">Share</button>
+  </div>
+  <p class="auth-note">Alternative friend page: <b>/share.html</b> on the same hosted domain.</p>
+</div>
+
+
+</div>
+
+<div class="top">
+  <div class="brand baum-brand">
+      <div class="baum-logo-shell"><img src="https://upload.wikimedia.org/wikipedia/commons/5/51/BT_logo.png" alt="BAUM TenPers Institute logo" onerror="this.style.display='none';this.parentElement.textContent='BAUM'"></div>
+      <div class="baum-wordmark"><strong>BAUM TenPers GRE 330+</strong><small>Graduate Test Preparation</small></div>
+    </div>
+  <div id="topStatus" class="muted" style="color:#cbd5e1">Secure Cloud GRE Platform</div>
+<div class="user-chip"><span id="currentStudentName">Student</span><button onclick="logoutBaum()" style="border:0;background:transparent;color:#ffc533;font-weight:800;cursor:pointer">Logout</button></div>
+  <div id="timer" class="timer">--:--</div>
+</div>
+
+<div class="wrap">
+<section id="home">
+
+<div id="routeTestHeader" class="route-test-header">
+  <a href="index.html">← Back to Main Dashboard</a>
+  <h1 style="margin:12px 0 0">BAUM TenPers GRE Test Center</h1>
+  <p id="routeTestSubtitle">Choose a test type and begin in a distraction-free test workspace.</p>
+</div>
+
+  <div class="card">
+    <h1>BAUM TenPers GRE 330+ Computer-Based Practice</h1>
+    <p class="muted">5,000-question secure cloud bank: 2,500 Quant + 2,500 Verbal. Timed sections, full simulation, practice mode, flags, question palette, server-side scoring, review, and progress tracking.</p>
+  </div>
+  
+
+<div id="dedicatedTestCenterCTA" class="card" style="margin-top:16px;border:1px solid #e5dcef">
+  <div class="mvp-pill">TEST CENTER</div>
+  <h2 style="margin:10px 0 5px">GRE Test Center</h2>
+  <p class="muted">Timed CBT, untimed practice and full GRE simulation now run on dedicated test pages away from the main dashboard.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+    <a class="btn" href="test.html" style="text-decoration:none">Open Test Center</a>
+    <a class="btn alt" href="cbt.html" style="text-decoration:none">Timed CBT</a>
+    <a class="btn alt" href="practice.html" style="text-decoration:none">Untimed Practice</a>
+    <a class="btn alt" href="simulation.html" style="text-decoration:none">Full Simulation</a>
+  </div>
+</div>
+
+<div class="test-select-panel" id="testHubPanel">
+  <div class="mvp-pill">TEST SELECTION</div>
+  <h3 style="margin:10px 0 4px">Choose your test</h3>
+  <div class="test-select-grid">
+    <label>Test type
+      <select id="mainTestType" onchange="updateMainTestOptions()">
+        <option value="Quant">Quant only</option>
+        <option value="Verbal">Verbal only</option>
+        <option value="Mixed" selected>Quant + Verbal together</option>
+      </select>
+    </label>
+    <label>Test format
+      <select id="mainTestFormat" onchange="updateMainTestOptions()">
+        <option value="practice">Practice set</option>
+        <option value="section">Timed section</option>
+        <option value="full" selected>Full simulation</option>
+        <option value="adaptive">Adaptive GRE</option>
+      </select>
+    </label>
+    <label>Question count
+      <select id="mainTestCount">
+        <option>10</option>
+        <option>20</option>
+        <option>27</option>
+        <option selected>54</option>
+      </select>
+    </label>
+  </div>
+  <p id="mainTestNote" class="test-mode-note">Quant + Verbal full simulation: 27 Quant + 27 Verbal questions.</p>
+  
+<button class="btn" style="margin-top:12px" onclick="startSelectedTest()">Start Selected Test</button>
+<div id="adaptiveStatus" class="adaptive-status">
+  <div><strong>Adaptive engine</strong><span id="adaptiveLevel">Starting level: Medium</span></div>
+  <div><strong>Live ability</strong><span id="adaptiveTheta">0.00 θ</span></div>
+  <div><strong>Projected score</strong><span id="adaptiveProjected">Quant — · Verbal —</span></div>
+</div>
+</div>
+
+<div class="grid g3" id="testModeCards" style="margin-top:16px">
+    <div class="mode">
+      <h3>Official-Style Section</h3><p class="muted">12 or 15 questions with GRE-style section timing.</p>
+      <button class="btn" onclick="startPreset('section')">Start Section</button>
+    </div>
+    <div class="mode">
+      <h3>Full Quant + Verbal Simulation</h3><p class="muted">54 questions across four timed sections, 88 minutes total.</p>
+      <button class="btn" onclick="startPreset('full')">Start Full Simulation</button>
+    </div>
+    <div class="mode">
+      <h3>Custom Practice</h3><p class="muted">Choose subject, count, difficulty, and optional timer.</p>
+      <button class="btn" onclick="showCustom()">Configure</button>
+    </div>
+  </div>
+  <div id="custom" class="card hidden" style="margin-top:16px">
+    <h2>Custom Practice</h2>
+    <div class="grid g3">
+      <label>Subject<select id="subject"><option>Quant</option><option>Verbal</option><option>Mixed</option></select></label>
+      <label>Questions<select id="count"><option>10</option><option>20</option><option>27</option><option>40</option><option>54</option></select></label>
+      <label>Difficulty<select id="diff"><option>All</option><option>Foundation</option><option>Medium</option><option>Hard</option><option>Very Hard</option></select></label>
+      <label>Timer<select id="timed"><option value="0">Untimed</option><option value="1">Timed</option></select></label>
+      <label>Minutes<input id="minutes" type="number" min="1" value="30"/></label>
+    </div>
+    <button class="btn" style="margin-top:14px" onclick="startCustom()">Start Practice</button>
+  </div>
+  <div class="card" id="savedProgressCard" style="margin-top:16px">
+    <h2>Saved Progress</h2>
+    <div id="savedStats" class="muted">No completed sessions yet.</div>
+    <button class="btn alt" style="margin-top:10px" onclick="clearProgress()">Clear Local Progress</button>
+  </div>
+</section>
+
+<section id="exam" class="hidden">
+  <div class="exam">
+    <div class="card question">
+      <div class="qhead"><div><span id="qnum" class="tag"></span><span id="qdiff" class="tag"></span><span id="qskill" class="tag"></span></div><button class="btn alt" onclick="toggleFlag()">⚑ Flag</button></div>
+      <div id="qtext" class="qtext"></div>
+      <div id="choices"></div>
+      <div class="actions">
+        <button class="btn alt" onclick="prevQ()">Previous</button>
+        <div><button class="btn alt" onclick="clearAnswer()">Clear Answer</button> <button class="btn" onclick="nextQ()">Next</button></div>
+      </div>
+    </div>
+    <aside class="sidebar">
+      <div class="card">
+        <h3 id="sectionName">Section</h3>
+        <div class="progress"><div id="progbar"></div></div>
+        <p class="muted" id="answeredCount"></p>
+        <div id="palette" class="palette"></div>
+        <button class="btn bad" style="width:100%;margin-top:16px" onclick="submitExam(false)">Submit Section</button>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section id="results" class="hidden">
+  <div class="card">
+    <h1>Results</h1>
+    <div class="grid g3">
+      <div><div class="muted">Correct</div><h2 id="rCorrect">0</h2></div>
+      <div><div class="muted">Accuracy</div><h2 id="rAcc">0%</h2></div>
+      <div><div class="muted">Estimated Scaled Score</div><h2 id="rScore">--</h2></div>
+    </div>
+    <div id="breakdown"></div>
+    <div class="actions"><button class="btn" onclick="goHome()">Home</button><button class="btn alt" onclick="toggleReview()">Review Answers</button></div>
+  </div>
+  <div id="review" class="hidden"></div>
+</section>
+</div>
+
+<script>
+
+let BAUM_BANK_READY = true;
+/* Production build: only non-sensitive selection metadata remains in the browser.
+   Question text, choices, answers and explanations are delivered/graded by Supabase. */
+function __btMetadataPool(section,count){
+  const levels=['Easy','Medium','Hard','Very Hard'];
+  return Array.from({length:count},(_,i)=>({
+    id:`meta-${section.toLowerCase()}-${i+1}`,
+    section,
+    skill:'General',
+    difficulty:levels[i%levels.length]
+  }));
+}
+let BANK={
+  quant:__btMetadataPool('Quant',2500),
+  verbal:__btMetadataPool('Verbal',2500)
+};
+
+let state={questions:[],answers:[],flags:[],idx:0,seconds:null,timerId:null,mode:'',name:'',started:0};
+
+function qs(id){return document.getElementById(id)}
+function shuffle(a){let x=[...a];for(let i=x.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]]}return x}
+function showOnly(id){['home','exam','results'].forEach(x=>qs(x).classList.toggle('hidden',x!==id))}
+function showCustom(){qs('custom').classList.toggle('hidden')}
+function scoreScale(correct,total){ if(!total)return 130; return Math.max(130,Math.min(170,Math.round(130+40*correct/total))) }
+
+function selectFrom(subject,count,diff='All'){
+  let arr=subject==='Quant'?BANK.quant:subject==='Verbal'?BANK.verbal:[...BANK.quant,...BANK.verbal];
+  if(diff!=='All')arr=arr.filter(q=>q.difficulty===diff);
+  return shuffle(arr).slice(0,count);
+}
+function startPreset(kind){
+  if(kind==='section'){
+    let subject=prompt("Type Quant or Verbal","Quant")||"Quant"; subject=/v/i.test(subject)?"Verbal":"Quant";
+    let first=confirm("Use first section length (12 questions)? Click Cancel for 15.");
+    let count=first?12:15, minutes=subject==='Verbal'?(first?18:23):(first?21:26);
+    begin(selectFrom(subject,count),minutes,`${subject} ${count}-Question Timed Section`);
+  }else{
+    // 27 verbal + 27 quant, total 88 min as one continuous simulation
+    let set=[...selectFrom('Verbal',27),...selectFrom('Quant',27)];
+    begin(set,88,"Full GRE Quant + Verbal Simulation");
+  }
+}
+function startCustom(){
+  let subject=qs('subject').value, count=+qs('count').value, diff=qs('diff').value;
+  let mins=qs('timed').value==='1'?+qs('minutes').value:null;
+  begin(selectFrom(subject,count,diff),mins,`${subject} Custom Practice`);
+}
+function begin(questions,minutes,name){
+  state.questions=questions; state.answers=questions.map(()=>null); state.flags=questions.map(()=>false); state.idx=0; state.seconds=minutes?minutes*60:null; state.mode=minutes?'timed':'practice'; state.name=name; state.started=Date.now();
+  if(state.timerId)clearInterval(state.timerId);
+  if(state.seconds!==null)state.timerId=setInterval(()=>{state.seconds--; renderTimer(); if(state.seconds<=0)submitExam(true)},1000);
+  showOnly('exam'); renderTimer(); render();
+}
+function renderTimer(){
+  if(state.seconds===null){qs('timer').textContent='UNTIMED';return}
+  let m=Math.floor(state.seconds/60),s=state.seconds%60; qs('timer').textContent=`${m}:${String(s).padStart(2,'0')}`;
+}
+function render(){
+  let q=state.questions[state.idx]; if(!q)return;
+  qs('sectionName').textContent=state.name;
+  qs('qnum').textContent=`Question ${state.idx+1} of ${state.questions.length}`;
+  qs('qdiff').textContent=q.difficulty; qs('qskill').textContent=q.skill; qs('qtext').textContent=q.question;
+  let multi=Array.isArray(q.answer);
+  qs('choices').innerHTML=q.options.map((o,i)=>{
+    let selected=multi?(state.answers[state.idx]||[]).includes(i):state.answers[state.idx]===i;
+    return `<label class="choice ${selected?'selected':''}"><input type="${multi?'checkbox':'radio'}" name="choice" ${selected?'checked':''} onchange="choose(${i})"><b>${String.fromCharCode(65+i)}.</b><span>${escapeHtml(o)}</span></label>`
+  }).join('');
+  qs('answeredCount').textContent=`Answered ${state.answers.filter(a=>a!==null && (!Array.isArray(a)||a.length)).length} / ${state.questions.length}`;
+  qs('progbar').style.width=`${100*(state.idx+1)/state.questions.length}%`;
+  qs('palette').innerHTML=state.questions.map((_,i)=>`<button class="pbtn ${state.answers[i]!==null?'answered':''} ${state.flags[i]?'flagged':''} ${i===state.idx?'current':''}" onclick="jump(${i})">${i+1}</button>`).join('');
+}
+function choose(i){
+  let q=state.questions[state.idx];
+  if(Array.isArray(q.answer)){
+    let a=Array.isArray(state.answers[state.idx])?[...state.answers[state.idx]]:[];
+    a=a.includes(i)?a.filter(x=>x!==i):[...a,i]; state.answers[state.idx]=a;
+  }else state.answers[state.idx]=i;
+  render();
+}
+function clearAnswer(){state.answers[state.idx]=null;render()}
+function toggleFlag(){state.flags[state.idx]=!state.flags[state.idx];render()}
+function nextQ(){if(state.idx<state.questions.length-1){state.idx++;render()}}
+function prevQ(){if(state.idx>0){state.idx--;render()}}
+function jump(i){state.idx=i;render()}
+function isCorrect(q,a){
+  if(Array.isArray(q.answer)){
+    if(!Array.isArray(a))return false; let x=[...q.answer].sort().join(','),y=[...a].sort().join(',');return x===y;
+  }
+  return a===q.answer;
+}
+function submitExam(auto){
+  if(!auto && !confirm("Submit this session now?"))return;
+  if(state.timerId)clearInterval(state.timerId);
+  let correct=state.questions.reduce((n,q,i)=>n+(isCorrect(q,state.answers[i])?1:0),0), total=state.questions.length;
+  qs('rCorrect').textContent=`${correct}/${total}`; qs('rAcc').textContent=`${Math.round(100*correct/total)}%`;
+  let qset=state.questions.filter(q=>q.section==='Quant'),vset=state.questions.filter(q=>q.section==='Verbal');
+  let qc=qset.reduce((n,q)=>{let i=state.questions.indexOf(q);return n+(isCorrect(q,state.answers[i])?1:0)},0);
+  let vc=vset.reduce((n,q)=>{let i=state.questions.indexOf(q);return n+(isCorrect(q,state.answers[i])?1:0)},0);
+  let scores=[]; if(qset.length)scores.push(`Q ${scoreScale(qc,qset.length)}`); if(vset.length)scores.push(`V ${scoreScale(vc,vset.length)}`);
+  qs('rScore').textContent=scores.join(' • ');
+  qs('breakdown').innerHTML=`<div class="resultRow"><span>Time used</span><b>${Math.round((Date.now()-state.started)/60000)} min</b></div><div class="resultRow"><span>Flagged</span><b>${state.flags.filter(Boolean).length}</b></div><div class="resultRow"><span>Unanswered</span><b>${state.answers.filter(a=>a===null).length}</b></div><p class="muted">Scaled scores are rough practice estimates, not official ETS scores.</p>`;
+  buildReview();
+  saveSession({date:new Date().toLocaleString(),name:state.name,correct,total,accuracy:Math.round(100*correct/total),scores:scores.join(' / ')});
+  showOnly('results');qs('timer').textContent='--:--';
+}
+function buildReview(){
+  qs('review').innerHTML=state.questions.map((q,i)=>{
+    let ok=isCorrect(q,state.answers[i]);
+    let a=state.answers[i], your=Array.isArray(a)?a.map(x=>String.fromCharCode(65+x)).join(', '):(a===null?'Unanswered':String.fromCharCode(65+a));
+    let correct=Array.isArray(q.answer)?q.answer.map(x=>String.fromCharCode(65+x)).join(', '):String.fromCharCode(65+q.answer);
+    return `<div class="card review ${ok?'correct':'wrong'}"><b>${q.id} • ${q.skill} • ${q.difficulty}</b><p style="white-space:pre-wrap">${escapeHtml(q.question)}</p><p><b>Your answer:</b> ${your} &nbsp; <b>Correct:</b> ${correct}</p><p>${escapeHtml(q.explanation)}</p></div>`
+  }).join('');
+}
+function toggleReview(){qs('review').classList.toggle('hidden')}
+function saveSession(s){let a=JSON.parse(localStorage.getItem(baumUserKey('gre330sessions'))||'[]');a.unshift(s);localStorage.setItem(baumUserKey('gre330sessions'),JSON.stringify(a.slice(0,20)));renderSaved()}
+function renderSaved(){let a=JSON.parse(localStorage.getItem(baumUserKey('gre330sessions'))||'[]');qs('savedStats').innerHTML=a.length?a.slice(0,8).map(s=>`<div class="resultRow"><span>${escapeHtml(s.date)} — ${escapeHtml(s.name)}</span><b>${s.correct}/${s.total} (${s.accuracy}%) ${escapeHtml(s.scores||'')}</b></div>`).join(''):'No completed sessions yet.'}
+function clearProgress(){if(confirm("Clear saved session history?")){localStorage.removeItem(baumUserKey('gre330sessions'));renderSaved()}}
+function goHome(){showOnly('home');renderSaved()}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+document.addEventListener('keydown',e=>{if(!qs('exam').classList.contains('hidden')){if(e.key==='ArrowRight')nextQ();if(e.key==='ArrowLeft')prevQ();if(/^[1-6]$/.test(e.key))choose(+e.key-1)}})
+renderSaved();
+</script>
+
+<script>
+function getMvpProfile(){ try{return JSON.parse(localStorage.getItem(baumUserKey('gre330profile'))||'null')}catch(e){return null} }
+function saveMvpProfile(){
+  const p={
+    name:document.getElementById('mvpName').value.trim()||'Student',
+    target:+document.getElementById('mvpTarget').value,
+    date:document.getElementById('mvpDate').value,
+    days:+document.getElementById('mvpDays').value,
+    created:new Date().toISOString()
+  };
+  localStorage.setItem(baumUserKey('gre330profile'),JSON.stringify(p));
+  document.getElementById('mvpOnboard').classList.add('hidden');
+  renderMvpDashboard();
+}
+function renderMvpDashboard(){
+  const p=getMvpProfile();
+  if(!p){ document.getElementById('mvpOnboard').classList.remove('hidden'); return; }
+  document.getElementById('mvpGreeting').textContent=`${p.name}, build toward ${p.target}`;
+  document.getElementById('mvpTargetDisplay').textContent=p.target;
+  if(p.date){
+    const d=Math.ceil((new Date(p.date+'T23:59:59')-new Date())/86400000);
+    document.getElementById('mvpCountdown').textContent=d>=0?`${d} days until test day`:'Test date has passed';
+    const created=new Date(p.created), end=new Date(p.date), total=Math.max(1,end-created), used=Math.max(0,new Date()-created);
+    document.getElementById('mvpGoalProgress').style.width=Math.min(100,100*used/total)+'%';
+  }else document.getElementById('mvpCountdown').textContent='Add a test date in setup';
+
+  const sessions=JSON.parse(localStorage.getItem(baumUserKey('gre330sessions'))||'[]');
+  document.getElementById('mvpSessions').textContent=sessions.length;
+  if(sessions.length){
+    const avg=Math.round(sessions.reduce((a,s)=>a+(s.accuracy||0),0)/sessions.length);
+    document.getElementById('mvpAccuracy').textContent=avg+'%';
+    const parsed=sessions.map(s=>{
+      const m=(s.scores||'').match(/(\d{3})/g); return m?Math.max(...m.map(Number)):null
+    }).filter(Boolean);
+    document.getElementById('mvpBest').textContent=parsed.length?Math.max(...parsed):'--';
+    document.getElementById('mvpRecent').innerHTML=sessions.slice(0,5).map(s=>`<div class="resultRow"><span>${escapeHtml(s.name)}</span><b>${s.accuracy}%</b></div>`).join('');
+  }else{
+    document.getElementById('mvpAccuracy').textContent='--';
+    document.getElementById('mvpBest').textContent='--';
+  }
+
+  // Simple study streak based on completed-session dates
+  const dates=[...new Set(sessions.map(s=>new Date(s.date).toDateString()))];
+  let streak=0, cursor=new Date();
+  for(let i=0;i<60;i++){
+    if(dates.includes(cursor.toDateString())){streak++;cursor.setDate(cursor.getDate()-1)}
+    else if(i===0){cursor.setDate(cursor.getDate()-1)}
+    else break;
+  }
+  document.getElementById('mvpStreak').textContent=streak;
+
+  // Weak areas derived from last submitted review data if available
+  const weak=JSON.parse(localStorage.getItem(baumUserKey('gre330weak'))||'{}');
+  const pairs=Object.entries(weak).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  document.getElementById('mvpWeak').innerHTML=pairs.length?pairs.map(([k,v])=>`<div class="resultRow"><span>${escapeHtml(k)}</span><b>${v} misses</b></div>`).join(''):'Complete a session to identify weak areas.';
+}
+function startTodayPlan(){
+  let arr=[...BANK.quant.filter(q=>q.difficulty==='Hard'||q.difficulty==='Very Hard'),...BANK.verbal.filter(q=>q.difficulty==='Hard'||q.difficulty==='Very Hard')];
+  begin(shuffle(arr).slice(0,20),35,"Daily 330 Targeted Practice");
+}
+function openDiagnostic(){
+  let q=shuffle(BANK.quant).slice(0,20), v=shuffle(BANK.verbal).slice(0,20);
+  begin([...q,...v],60,"40-Question Diagnostic");
+}
+const _oldSubmitExam=submitExam;
+submitExam=function(auto){
+  // Record weak skills before existing result flow
+  try{
+    const weak=JSON.parse(localStorage.getItem(baumUserKey('gre330weak'))||'{}');
+    state.questions.forEach((q,i)=>{ if(!isCorrect(q,state.answers[i])) weak[q.skill]=(weak[q.skill]||0)+1; });
+    localStorage.setItem(baumUserKey('gre330weak'),JSON.stringify(weak));
+  }catch(e){}
+  _oldSubmitExam(auto);
+  setTimeout(renderMvpDashboard,0);
+}
+const _oldGoHome=goHome;
+goHome=function(){_oldGoHome();renderMvpDashboard();}
+window.addEventListener('load',()=>renderMvpDashboard());
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+
+<script id="baum-auth-chrome-share">
+let authMode = 'login';
+
+const baumSupabase = window.supabase.createClient(
+  window.BAUM_SUPABASE_URL,
+  window.BAUM_SUPABASE_PUBLISHABLE_KEY
+);
+
+// Keep a lightweight local mirror because other existing
+// BAUM GRE components currently read baumGreCurrentUser.
+function currentBaumUser(){
+  try{
+    return JSON.parse(
+      localStorage.getItem('baumGreCurrentUser') || 'null'
+    );
+  }catch(e){
+    return null;
+  }
+}
+
+function baumUserKey(base){
+  const u = currentBaumUser();
+  return u ? `${base}:${u.email.toLowerCase()}` : base;
+}
+
+function showAuthMode(mode){
+  authMode = mode;
+
+  document
+    .getElementById('loginTab')
+    .classList.toggle('active', mode === 'login');
+
+  document
+    .getElementById('signupTab')
+    .classList.toggle('active', mode === 'signup');
+
+  document
+    .getElementById('authNameWrap')
+    .classList.toggle('hidden', mode !== 'signup');
+
+  document.getElementById('authSubmitBtn').textContent =
+    mode === 'login' ? 'Login' : 'Create Account';
+
+  document.getElementById('authMessage').textContent = '';
+}
+
+async function submitAuth(){
+
+  const email =
+    (document.getElementById('authEmail').value || '')
+      .trim()
+      .toLowerCase();
+
+  const password =
+    document.getElementById('authPassword').value || '';
+
+  const name =
+    (document.getElementById('authName').value || '').trim();
+
+  const msg = document.getElementById('authMessage');
+  const btn = document.getElementById('authSubmitBtn');
+
+  if(!email || !email.includes('@')){
+    msg.textContent = 'Enter a valid email address.';
+    return;
+  }
+
+  if(password.length < 6){
+    msg.textContent =
+      'Password must be at least 6 characters.';
+    return;
+  }
+
+  btn.disabled = true;
+  msg.textContent =
+    authMode === 'signup'
+      ? 'Creating your account...'
+      : 'Signing in...';
+
+  try {
+
+    if(authMode === 'signup'){
+
+      if(!name){
+        msg.textContent = 'Enter your full name.';
+        return;
+      }
+
+      const { data, error } =
+        await baumSupabase.auth.signUp({
+          email,
+          password,
+          options:{
+            data:{
+              full_name: name
+            }
+          }
+        });
+
+      if(error) throw error;
+
+      // If email confirmation is enabled, Supabase may create
+      // the user but not create a session immediately.
+      if(!data.session){
+        msg.textContent =
+          'Account created. Check your email to confirm your account, then log in.';
+        showAuthMode('login');
+        return;
+      }
+
+      const userName =
+        data.user?.user_metadata?.full_name ||
+        name ||
+        email.split('@')[0];
+
+      localStorage.setItem(
+        'baumGreCurrentUser',
+        JSON.stringify({
+          id: data.user.id,
+          email: data.user.email,
+          name: userName
+        })
+      );
+
+      await unlockBaumApp();
+
+    } else {
+
+      const { data, error } =
+        await baumSupabase.auth.signInWithPassword({
+          email,
+          password
+        });
+
+      if(error) throw error;
+
+      const user = data.user;
+
+      const userName =
+        user.user_metadata?.full_name ||
+        email.split('@')[0];
+
+      localStorage.setItem(
+        'baumGreCurrentUser',
+        JSON.stringify({
+          id: user.id,
+          email: user.email,
+          name: userName
+        })
+      );
+
+      await unlockBaumApp();
+    }
+
+  } catch(error){
+
+    console.error('Supabase authentication error:', error);
+
+    msg.textContent =
+      error?.message ||
+      'Authentication failed. Please try again.';
+
+  } finally {
+
+    btn.disabled = false;
+  }
+}
+
+async function unlockBaumApp(){
+
+  const {
+    data: { session }
+  } = await baumSupabase.auth.getSession();
+
+  if(!session){
+
+    localStorage.removeItem('baumGreCurrentUser');
+
+    document
+      .getElementById('baumAuthGate')
+      .classList.remove('hidden');
+
+    return;
+  }
+
+  const user = session.user;
+
+  const name =
+    user.user_metadata?.full_name ||
+    user.email?.split('@')[0] ||
+    'Student';
+
+  localStorage.setItem(
+    'baumGreCurrentUser',
+    JSON.stringify({
+      id: user.id,
+      email: user.email,
+      name: name
+    })
+  );
+
+  document
+    .getElementById('baumAuthGate')
+    .classList.add('hidden');
+
+  document.getElementById('currentStudentName').textContent =
+    name;
+
+  if(typeof renderMvpDashboard === 'function'){
+    renderMvpDashboard();
+  }
+}
+
+async function logoutBaum(){
+
+  await baumSupabase.auth.signOut();
+
+  localStorage.removeItem('baumGreCurrentUser');
+
+  document
+    .getElementById('baumAuthGate')
+    .classList.remove('hidden');
+}
+
+
+// Restore the authenticated Supabase session whenever
+// the student returns to the app.
+window.addEventListener('load', async () => {
+  await unlockBaumApp();
+});
+
+
+// Keep the BAUM interface synchronized with Supabase login state.
+baumSupabase.auth.onAuthStateChange(
+  async (event, session) => {
+
+    if(session?.user){
+
+      const user = session.user;
+
+      const name =
+        user.user_metadata?.full_name ||
+        user.email?.split('@')[0] ||
+        'Student';
+
+      localStorage.setItem(
+        'baumGreCurrentUser',
+        JSON.stringify({
+          id: user.id,
+          email: user.email,
+          name: name
+        })
+      );
+
+    } else if(event === 'SIGNED_OUT'){
+
+      localStorage.removeItem('baumGreCurrentUser');
+    }
+  }
+);
+
+// Separate Google Chrome PWA installation flow
+async function installWithChrome(){
+  const isChromium=/Chrome|Chromium|Edg/.test(navigator.userAgent) && !/OPR/.test(navigator.userAgent);
+  if(!isChromium){
+    alert('Open this web app in Google Chrome or Microsoft Edge, then choose Install with Google Chrome.');
+    return;
+  }
+  if(typeof baumInstallPrompt!=='undefined' && baumInstallPrompt){
+    baumInstallPrompt.prompt();
+    await baumInstallPrompt.userChoice;
+    baumInstallPrompt=null;
+  }else{
+    showChromeHelp();
+  }
+}
+function showChromeHelp(){
+  alert('Google Chrome: open this hosted app over HTTPS. Then click the install icon in the right side of the address bar, or open Chrome menu → Install app / Add to Home screen. On Android Chrome, use menu → Install app.');
+}
+function publicBase(){
+  if(location.protocol==='file:') return 'HOST_THIS_APP_TO_GET_PUBLIC_LINK';
+  return location.origin + location.pathname.replace(/\/[^\/]*$/,'/');
+}
+function setFriendLink(){
+  const el=document.getElementById('friendShareLink');
+  if(!el)return;
+  el.value = location.protocol==='file:' ? 'Host the Web Deploy ZIP on Vercel/Netlify/baumtenpers.com first' : new URL('share.html',location.href).href;
+}
+async function copyFriendLink(){
+  setFriendLink();
+  const value=document.getElementById('friendShareLink').value;
+  try{await navigator.clipboard.writeText(value);alert('Friend web link copied.')}catch(e){document.getElementById('friendShareLink').select()}
+}
+async function shareFriendLink(){
+  setFriendLink();
+  const url=document.getElementById('friendShareLink').value;
+  if(navigator.share && location.protocol!=='file:'){
+    await navigator.share({title:'BAUM TenPers GRE 330+',text:'Try the BAUM TenPers GRE 330+ preparation app.',url});
+  }else{
+    copyFriendLink();
+  }
+}
+window.addEventListener('load',setFriendLink);
+</script>
+
+
+<script id="baum-v2-install">
+function baumDevice(){const u=navigator.userAgent;if(/iPhone|iPad|iPod/.test(u))return'ios';if(/Android/.test(u))return'android';if(/Win/.test(u))return'windows';if(/Mac/.test(u))return'mac';return'other'}
+async function installBaumAppV2(){
+ const d=baumDevice();
+ if(d==='ios'){alert('iPhone/iPad: open in Safari, tap Share, then Add to Home Screen. iOS does not allow a web page to force the install prompt.');return}
+ if(typeof baumInstallPrompt!=='undefined'&&baumInstallPrompt){baumInstallPrompt.prompt();await baumInstallPrompt.userChoice;baumInstallPrompt=null}
+ else alert('Open this HTTPS Vercel URL in Chrome/Edge and use the browser Install app / Add to Home screen option if no prompt appears.');
+}
+window.addEventListener('load',()=>{
+ const b=document.getElementById('installPwaBtn'); if(b){const d=baumDevice();b.textContent=d==='android'?'Install on Android':d==='ios'?'Install on iPhone/iPad':d==='windows'?'Install on Windows Desktop':d==='mac'?'Install on Mac':'Install App';b.onclick=installBaumAppV2}
+});
+</script>
+
+
+<script id="baum-secure-exam-js">
+function secureToast(msg){
+  const t=document.getElementById('secureToast'); if(!t)return;
+  t.textContent=msg;t.style.display='block';clearTimeout(window.__btToastTimer);
+  window.__btToastTimer=setTimeout(()=>t.style.display='none',1700);
+}
+function isExamVisible(){
+  const e=document.getElementById('exam');
+  return e && !e.classList.contains('hidden');
+}
+function currentStudentStamp(){
+  try{
+    const u=JSON.parse(localStorage.getItem('baumGreCurrentUser')||'null');
+    if(u) return `${u.name||'Student'} • ${u.email||''}`;
+  }catch(e){}
+  return 'BAUM TenPers GRE Student';
+}
+function renderWatermarks(){
+  const layer=document.getElementById('watermarkLayer'); if(!layer)return;
+  const stamp=currentStudentStamp()+' • '+new Date().toLocaleDateString();
+  const pos=[[4,8],[39,5],[73,12],[14,34],[52,31],[80,42],[3,61],[39,63],[72,70],[18,86],[57,88]];
+  layer.innerHTML=pos.map(([x,y])=>`<div class="wm" style="left:${x}%;top:${y}%">${stamp}</div>`).join('');
+}
+document.addEventListener('contextmenu',e=>{if(isExamVisible()){e.preventDefault();secureToast('Right-click is disabled during tests.')}},true);
+document.addEventListener('copy',e=>{if(isExamVisible()){e.preventDefault();secureToast('Copying test questions is disabled.')}},true);
+document.addEventListener('cut',e=>{if(isExamVisible()){e.preventDefault();secureToast('Cutting test content is disabled.')}},true);
+document.addEventListener('dragstart',e=>{if(isExamVisible())e.preventDefault()},true);
+document.addEventListener('selectstart',e=>{if(isExamVisible() && !['INPUT','TEXTAREA'].includes(e.target.tagName))e.preventDefault()},true);
+document.addEventListener('keydown',e=>{
+  if(!isExamVisible())return;
+  const k=e.key.toLowerCase();
+  if(
+    e.key==='F12' ||
+    (e.ctrlKey && ['c','x','s','p','u','a'].includes(k)) ||
+    (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(k))
+  ){
+    e.preventDefault(); e.stopPropagation(); secureToast('This action is disabled during protected tests.');
+  }
+},true);
+
+window.addEventListener('blur',()=>{
+  if(isExamVisible()) document.getElementById('focusShield')?.classList.add('active');
+});
+window.addEventListener('focus',()=>{
+  document.getElementById('focusShield')?.classList.remove('active');
+});
+document.addEventListener('visibilitychange',()=>{
+  const shield=document.getElementById('focusShield');
+  if(document.hidden && isExamVisible()) shield?.classList.add('active');
+  else shield?.classList.remove('active');
+});
+
+const __btOldShowOnly = typeof showOnly==='function' ? showOnly : null;
+if(__btOldShowOnly){
+  showOnly=function(id){
+    __btOldShowOnly(id);
+    document.body.classList.toggle('exam-active',id==='exam');
+    if(id==='exam') renderWatermarks();
+  }
+}
+
+window.addEventListener('beforeprint',()=>{
+  if(isExamVisible()) secureToast('Printing is disabled for protected test content.');
+});
+
+window.addEventListener('load',()=>{
+  const g=document.getElementById('secureBankGate');
+  if(g) g.classList.add('hidden');
+  renderWatermarks();
+});
+</script>
+
+
+<script id="baum-test-selector-js">
+function updateMainTestOptions(){
+  const type=document.getElementById('mainTestType')?.value||'Mixed';
+  const format=document.getElementById('mainTestFormat')?.value||'full';
+  const count=document.getElementById('mainTestCount');
+  const note=document.getElementById('mainTestNote');
+  if(!count||!note)return;
+
+  if(format==='adaptive'){
+    count.value= type==='Mixed' ? '54' : '27';
+    count.disabled=true;
+    note.textContent= type==='Mixed'
+      ? 'Adaptive diagnostic: Quant + Verbal, routed from Medium toward easier or harder material as ability is estimated.'
+      : `Adaptive ${type} diagnostic: starts at Medium and estimates ability as you answer.`;
+  }else if(format==='full'){
+    count.disabled=false;
+    if(type==='Mixed'){
+      count.value='54';
+      note.textContent='Quant + Verbal full simulation: 27 Quant + 27 Verbal questions.';
+    }else{
+      count.value='27';
+      note.textContent=`${type} full simulation: 27 questions.`;
+    }
+  }else if(format==='section'){
+    count.disabled=false;
+    count.value= type==='Mixed' ? '20' : '20';
+    note.textContent= type==='Mixed'
+      ? 'Mixed timed section: Quant and Verbal questions in one timed set.'
+      : `${type} timed section.`;
+  }else{
+    count.disabled=false;
+    note.textContent= type==='Mixed'
+      ? 'Mixed practice set using both Quant and Verbal.'
+      : `${type} practice set.`;
+  }
+}
+function startSelectedTest(){
+  const type=document.getElementById('mainTestType')?.value||'Mixed';
+  const format=document.getElementById('mainTestFormat')?.value||'full';
+  const count=+(document.getElementById('mainTestCount')?.value||20);
+
+  if(!BANK){ alert('Question bank is still loading. Please wait a moment.'); return; }
+
+  if(format==='full'){
+    if(type==='Quant'){
+      begin(selectFrom('Quant',27),47,'Quant Full Simulation');
+    }else if(type==='Verbal'){
+      begin(selectFrom('Verbal',27),41,'Verbal Full Simulation');
+    }else{
+      const q=selectFrom('Quant',27);
+      const v=selectFrom('Verbal',27);
+      begin([...v,...q],88,'Quant + Verbal Full Simulation');
+    }
+    return;
+  }
+
+  if(format==='section'){
+    if(type==='Quant'){
+      const mins=count<=12?21:Math.max(21,Math.round(count*1.73));
+      begin(selectFrom('Quant',count),mins,`Quant ${count}-Question Timed Section`);
+    }else if(type==='Verbal'){
+      const mins=count<=12?18:Math.max(18,Math.round(count*1.53));
+      begin(selectFrom('Verbal',count),mins,`Verbal ${count}-Question Timed Section`);
+    }else{
+      const qCount=Math.ceil(count/2),vCount=Math.floor(count/2);
+      const q=selectFrom('Quant',qCount),v=selectFrom('Verbal',vCount);
+      begin(shuffle([...q,...v]),Math.max(20,Math.round(count*1.6)),`Mixed ${count}-Question Timed Section`);
+    }
+    return;
+  }
+
+  // practice mode
+  if(type==='Mixed'){
+    const qCount=Math.ceil(count/2),vCount=Math.floor(count/2);
+    begin(shuffle([...selectFrom('Quant',qCount),...selectFrom('Verbal',vCount)]),null,`Mixed ${count}-Question Practice`);
+  }else{
+    begin(selectFrom(type,count),null,`${type} ${count}-Question Practice`);
+  }
+}
+window.addEventListener('load',updateMainTestOptions);
+</script>
+
+
+<script id="baum-adaptive-v23-js">
+const BT_ADAPTIVE={
+  active:false, type:'Mixed', theta:{Quant:0,Verbal:0}, answered:{Quant:0,Verbal:0},
+  correct:{Quant:0,Verbal:0}, history:[], targetDifficulty:{Quant:'Medium',Verbal:'Medium'}
+};
+const BT_DIFF_B={Easy:-1.15,Medium:-0.25,Hard:0.65,'Very Hard':1.35};
+
+function btClamp(x,a,b){return Math.max(a,Math.min(b,x))}
+function btScoreFromTheta(theta){
+  // GRE-like 130–170 projection; diagnostic estimate, not an ETS score.
+  return Math.round(btClamp(150 + 11.5*theta,130,170));
+}
+function btLevel(theta){
+  if(theta < -.65) return 'Easy';
+  if(theta < .35) return 'Medium';
+  if(theta < 1.10) return 'Hard';
+  return 'Very Hard';
+}
+function btUpdateTheta(section,isCorrect,difficulty){
+  const b=BT_DIFF_B[difficulty] ?? 0;
+  const theta=BT_ADAPTIVE.theta[section]||0;
+  const p=1/(1+Math.exp(-(theta-b)));
+  // online IRT-style update, damped to prevent single-item jumps
+  const step=.48/Math.sqrt(1+BT_ADAPTIVE.answered[section]*.10);
+  BT_ADAPTIVE.theta[section]=btClamp(theta+step*((isCorrect?1:0)-p),-1.75,1.75);
+  BT_ADAPTIVE.answered[section]++;
+  if(isCorrect) BT_ADAPTIVE.correct[section]++;
+  BT_ADAPTIVE.targetDifficulty[section]=btLevel(BT_ADAPTIVE.theta[section]);
+  BT_ADAPTIVE.history.push({section,isCorrect,difficulty,theta:BT_ADAPTIVE.theta[section],time:Date.now()});
+  btRenderAdaptive();
+}
+function btRenderAdaptive(){
+  const q=BT_ADAPTIVE.theta.Quant,v=BT_ADAPTIVE.theta.Verbal;
+  const level=document.getElementById('adaptiveLevel');
+  const theta=document.getElementById('adaptiveTheta');
+  const proj=document.getElementById('adaptiveProjected');
+  if(level) level.textContent=BT_ADAPTIVE.active
+    ? `Q: ${BT_ADAPTIVE.targetDifficulty.Quant} · V: ${BT_ADAPTIVE.targetDifficulty.Verbal}`
+    : 'Starting level: Medium';
+  if(theta) theta.textContent=`Q ${q.toFixed(2)} · V ${v.toFixed(2)} θ`;
+  if(proj) proj.textContent=`Quant ${btScoreFromTheta(q)} · Verbal ${btScoreFromTheta(v)} · Total ${btScoreFromTheta(q)+btScoreFromTheta(v)}`;
+}
+function btAdaptivePick(section,n){
+  const pool=(BANK?.[section.toLowerCase()]||[]);
+  const selected=[],used=new Set();
+  let theta=BT_ADAPTIVE.theta[section]||0;
+  for(let i=0;i<n;i++){
+    const target=btLevel(theta);
+    let candidates=pool.filter(x=>x.difficulty===target&&!used.has(x.id));
+    if(!candidates.length)candidates=pool.filter(x=>!used.has(x.id));
+    if(!candidates.length)break;
+    // random among a small candidate window to avoid deterministic exposure
+    const window=candidates.slice().sort(()=>Math.random()-.5).slice(0,Math.min(30,candidates.length));
+    const q=window[Math.floor(Math.random()*window.length)];
+    used.add(q.id); selected.push(q);
+    // Selection is initially routed by current estimate; live updates occur as answers are graded.
+  }
+  return selected;
+}
+function startAdaptiveTest(type){
+  if(!BANK){alert('Question bank is still loading.');return}
+  BT_ADAPTIVE.active=true; BT_ADAPTIVE.type=type;
+  BT_ADAPTIVE.theta={Quant:0,Verbal:0};BT_ADAPTIVE.answered={Quant:0,Verbal:0};
+  BT_ADAPTIVE.correct={Quant:0,Verbal:0};BT_ADAPTIVE.history=[];
+  let items=[],mins=0,title='';
+  if(type==='Quant'){items=btAdaptivePick('Quant',27);mins=47;title='Adaptive Quant Diagnostic'}
+  else if(type==='Verbal'){items=btAdaptivePick('Verbal',27);mins=41;title='Adaptive Verbal Diagnostic'}
+  else{
+    items=[...btAdaptivePick('Verbal',27),...btAdaptivePick('Quant',27)];
+    mins=88;title='Adaptive Quant + Verbal Diagnostic';
+  }
+  btRenderAdaptive();
+  begin(items,mins,title);
+}
+const __btV23OriginalStartSelected=window.startSelectedTest;
+window.startSelectedTest=function(){
+  const format=document.getElementById('mainTestFormat')?.value||'full';
+  const type=document.getElementById('mainTestType')?.value||'Mixed';
+  if(format==='adaptive'){startAdaptiveTest(type);return}
+  BT_ADAPTIVE.active=false;
+  return __btV23OriginalStartSelected();
+};
+
+// Hook grading by observing answer state changes when possible.
+function btQuestionSection(q){return q?.section==='Verbal'?'Verbal':'Quant'}
+function btInferCorrect(q,chosen){
+  if(!q)return null;
+  if(Array.isArray(q.answer)){
+    const arr=Array.isArray(chosen)?chosen:[chosen];
+    return q.answer.length===arr.length && q.answer.every(x=>arr.includes(x));
+  }
+  return chosen===q.answer;
+}
+// Patch nextQ: grade current item from app state before advancing.
+// This is deliberately defensive against the app's existing variable names.
+const __btOldNextQ = typeof nextQ==='function' ? nextQ : null;
+if(__btOldNextQ){
+  nextQ=function(){
+    if(BT_ADAPTIVE.active){
+      try{
+        const q=(typeof test!=='undefined' && test.items)?test.items[test.idx]:
+                (typeof state!=='undefined' && state.items)?state.items[state.idx]:null;
+        let chosen=(typeof test!=='undefined')?test.answers?.[test.idx]:
+                   (typeof state!=='undefined')?state.answers?.[state.idx]:undefined;
+        if(q && chosen!==undefined && !q.__btAdaptiveGraded){
+          const ok=btInferCorrect(q,chosen);
+          if(ok!==null){q.__btAdaptiveGraded=true;btUpdateTheta(btQuestionSection(q),ok,q.difficulty)}
+        }
+      }catch(e){}
+    }
+    return __btOldNextQ.apply(this,arguments);
+  }
+}
+function btAdaptiveSummary(){
+  if(!BT_ADAPTIVE.active)return '';
+  const q=btScoreFromTheta(BT_ADAPTIVE.theta.Quant),v=btScoreFromTheta(BT_ADAPTIVE.theta.Verbal);
+  return `<div class="adaptive-result">
+    <span class="adaptive-badge">ADAPTIVE DIAGNOSTIC</span>
+    <h3 style="margin:9px 0 0">Projected GRE range</h3>
+    <div class="adaptive-result-grid">
+      <div><small>Quant</small><strong>${q}</strong></div>
+      <div><small>Verbal</small><strong>${v}</strong></div>
+      <div><small>Total</small><strong>${q+v}</strong></div>
+      <div><small>Ability</small><strong>Q ${BT_ADAPTIVE.theta.Quant.toFixed(2)} / V ${BT_ADAPTIVE.theta.Verbal.toFixed(2)}</strong></div>
+    </div>
+    <p style="margin:10px 0 0;font-size:12px;color:#e9e0ff">Diagnostic estimate from this app's item-response model; it is not an official ETS GRE score.</p>
+  </div>`;
+}
+window.btAdaptiveSummary=btAdaptiveSummary;
+window.addEventListener('load',btRenderAdaptive);
+</script>
+
+
+<script id="baum-v24-analytics-js">
+function btUserStoreKey(base){
+  try{
+    const u=JSON.parse(localStorage.getItem('baumGreCurrentUser')||'null');
+    return u ? `${base}:${String(u.email||u.name||'student').toLowerCase()}` : base;
+  }catch(e){return base}
+}
+function btLoadJSON(key,fallback){
+  try{return JSON.parse(localStorage.getItem(btUserStoreKey(key))||JSON.stringify(fallback))}
+  catch(e){return fallback}
+}
+function btSaveJSON(key,val){
+  try{localStorage.setItem(btUserStoreKey(key),JSON.stringify(val))}catch(e){}
+}
+function btAccuracy(correct,total){return total?Math.round(100*correct/total):null}
+function btApproxScore(acc){
+  if(acc===null)return null;
+  // practice estimate only
+  return Math.max(130,Math.min(170,Math.round(130+40*(acc/100))));
+}
+function btRecordAnalyticsFromState(){
+  try{
+    const qs=(typeof state!=='undefined' && state.questions)?state.questions:[];
+    const ans=(typeof state!=='undefined' && state.answers)?state.answers:[];
+    if(!qs.length)return;
+
+    const history=btLoadJSON('baumAnalyticsHistory',[]);
+    const skillStats=btLoadJSON('baumSkillStats',{});
+    const diffStats=btLoadJSON('baumDifficultyStats',{});
+    const sectionStats={Quant:{c:0,t:0},Verbal:{c:0,t:0}};
+
+    qs.forEach((q,i)=>{
+      const section=q.section==='Verbal'?'Verbal':'Quant';
+      const ok=typeof isCorrect==='function' ? isCorrect(q,ans[i]) : false;
+      sectionStats[section].t++;
+      if(ok)sectionStats[section].c++;
+
+      const sk=q.skill||'General';
+      skillStats[sk]=skillStats[sk]||{c:0,t:0,section};
+      skillStats[sk].t++; if(ok)skillStats[sk].c++;
+
+      const df=q.difficulty||'Medium';
+      diffStats[df]=diffStats[df]||{c:0,t:0};
+      diffStats[df].t++; if(ok)diffStats[df].c++;
+    });
+
+    history.unshift({
+      ts:Date.now(),
+      name:(typeof state!=='undefined'&&state.name)||'Practice Session',
+      quant:sectionStats.Quant,
+      verbal:sectionStats.Verbal
+    });
+    btSaveJSON('baumAnalyticsHistory',history.slice(0,100));
+    btSaveJSON('baumSkillStats',skillStats);
+    btSaveJSON('baumDifficultyStats',diffStats);
+  }catch(e){console.warn('analytics record',e)}
+}
+function renderAdvancedAnalytics(){
+  const skillStats=btLoadJSON('baumSkillStats',{});
+  const diffStats=btLoadJSON('baumDifficultyStats',{});
+  const hist=btLoadJSON('baumAnalyticsHistory',[]);
+
+  let qc=0,qt=0,vc=0,vt=0;
+  hist.forEach(h=>{
+    qc+=h.quant?.c||0;qt+=h.quant?.t||0;
+    vc+=h.verbal?.c||0;vt+=h.verbal?.t||0;
+  });
+
+  const qa=btAccuracy(qc,qt),va=btAccuracy(vc,vt);
+  const qEl=document.getElementById('anaQuantAcc'),vEl=document.getElementById('anaVerbalAcc');
+  const qsEl=document.getElementById('anaQuantScore'),vsEl=document.getElementById('anaVerbalScore');
+  if(qEl)qEl.textContent=qa===null?'--':qa+'%';
+  if(vEl)vEl.textContent=va===null?'--':va+'%';
+  if(qsEl)qsEl.textContent=qa===null?'--':btApproxScore(qa);
+  if(vsEl)vsEl.textContent=va===null?'--':btApproxScore(va);
+
+  const skills=Object.entries(skillStats).map(([k,s])=>({
+    skill:k,acc:btAccuracy(s.c,s.t),n:s.t,section:s.section||'General'
+  })).sort((a,b)=>(a.acc??101)-(b.acc??101));
+
+  const weak=document.getElementById('anaWeakSkills');
+  if(weak){
+    weak.innerHTML=skills.length?skills.slice(0,8).map(s=>{
+      const pri=s.acc<55?'priority-high':s.acc<70?'priority-med':'priority-low';
+      const label=s.acc<55?'HIGH':s.acc<70?'MEDIUM':'LOW';
+      return `<div class="skill-row">
+        <div><b>${s.skill}</b><div class="skill-bar"><div style="width:${s.acc||0}%"></div></div></div>
+        <div>${s.acc??0}% <small>(${s.n} q)</small></div>
+        <div class="${pri}">${label}</div>
+      </div>`
+    }).join(''):'Complete more questions to build a diagnostic profile.';
+  }
+
+  const order=['Easy','Medium','Hard','Very Hard'];
+  const diff=document.getElementById('anaDifficulty');
+  if(diff){
+    diff.innerHTML=order.map(k=>{
+      const s=diffStats[k];const a=s?btAccuracy(s.c,s.t):null;
+      return `<div class="skill-row"><div><b>${k}</b><div class="skill-bar"><div style="width:${a||0}%"></div></div></div><div>${a===null?'--':a+'%'}</div><div>${s?s.t:0} q</div></div>`
+    }).join('');
+  }
+
+  const trend=document.getElementById('anaTrend');
+  if(trend){
+    const rows=hist.slice(0,8).map(h=>{
+      const q=btAccuracy(h.quant?.c||0,h.quant?.t||0);
+      const v=btAccuracy(h.verbal?.c||0,h.verbal?.t||0);
+      return `<div class="resultRow"><span>${new Date(h.ts).toLocaleDateString()} · ${h.name}</span><b>Q ${q===null?'--':btApproxScore(q)} · V ${v===null?'--':btApproxScore(v)}</b></div>`
+    });
+    trend.innerHTML=rows.length?rows.join(''):'No completed score history yet.';
+  }
+
+  const focus=document.getElementById('anaFocus');
+  if(focus){
+    const targets=skills.slice(0,5);
+    focus.innerHTML=targets.length?targets.map((s,i)=>`<div class="resultRow"><span>${i+1}. ${s.skill}</span><b>${s.acc}%</b></div>`).join(''):'Complete a timed or adaptive test to generate recommendations.';
+  }
+
+  const diag=document.getElementById('anaDiagnostic');
+  if(diag){
+    if(hist.length<3){
+      diag.innerHTML=`<b>330+ diagnostic:</b> complete ${3-hist.length} more timed/adaptive session${3-hist.length===1?'':'s'} for a more stable recommendation.`;
+    }else{
+      const total=(qa===null?0:btApproxScore(qa))+(va===null?0:btApproxScore(va));
+      let msg='';
+      if(total>=330) msg='Current practice estimate is in the 330+ range. Focus on consistency under time pressure and Very Hard questions.';
+      else if(total>=320) msg='You are within striking distance of 330. Prioritize the bottom 3 skills and Hard/Very Hard accuracy.';
+      else msg='Build accuracy first. Raise Medium difficulty performance above 80% before emphasizing Very Hard volume.';
+      diag.innerHTML=`<b>330+ diagnostic:</b> ${msg}`;
+    }
+  }
+}
+
+// Hook existing submit flow to record analytics.
+if(typeof submitExam==='function'){
+  const __btV24Submit=submitExam;
+  submitExam=function(auto){
+    btRecordAnalyticsFromState();
+    const r=__btV24Submit.apply(this,arguments);
+    setTimeout(renderAdvancedAnalytics,50);
+    return r;
+  }
+}
+window.addEventListener('load',()=>setTimeout(renderAdvancedAnalytics,200));
+</script>
+
+
+<script id="baum-v25-plan-js">
+let BT_CURRENT_PLAN=null;
+function btPlanKey(){
+  try{const u=JSON.parse(localStorage.getItem('baumGreCurrentUser')||'null');return 'baumStudyPlan:'+(u?.email||'student').toLowerCase()}
+  catch(e){return 'baumStudyPlan'}
+}
+function btPlanWeakSkills(){
+  try{
+    const key=typeof btUserStoreKey==='function'?btUserStoreKey('baumSkillStats'):'baumSkillStats';
+    const s=JSON.parse(localStorage.getItem(key)||'{}');
+    return Object.entries(s).map(([skill,v])=>({skill,acc:v.t?Math.round(100*v.c/v.t):100,section:v.section||''}))
+      .sort((a,b)=>a.acc-b.acc).slice(0,5);
+  }catch(e){return []}
+}
+function generateStudyPlan(){
+  const dateVal=document.getElementById('planDate').value;
+  const current=+document.getElementById('planCurrent').value||300;
+  const target=+document.getElementById('planTarget').value||330;
+  const hours=+document.getElementById('planHours').value||10;
+  const today=new Date(); today.setHours(0,0,0,0);
+  let testDate=dateVal?new Date(dateVal+'T00:00:00'):new Date(today.getTime()+84*86400000);
+  if(testDate<=today)testDate=new Date(today.getTime()+28*86400000);
+  const days=Math.max(7,Math.ceil((testDate-today)/86400000));
+  const weeks=Math.max(1,Math.ceil(days/7));
+  const gap=Math.max(0,target-current);
+  const weak=btPlanWeakSkills();
+  const weakNames=weak.length?weak.map(x=>x.skill):['Algebra','Reading Comprehension','Text Completion','Data Analysis'];
+  const phases=[];
+  const phase1=Math.max(1,Math.round(weeks*.35)), phase2=Math.max(1,Math.round(weeks*.4));
+  for(let w=1;w<=weeks;w++){
+    let phase,focus,mocks;
+    if(w<=phase1){phase='Foundation & Accuracy';focus=weakNames.slice(0,3);mocks='1 timed section'}
+    else if(w<=phase1+phase2){phase='Hard-Question Development';focus=weakNames.slice(0,4);mocks='2 timed/adaptive sections'}
+    else{phase='Test Simulation & Refinement';focus=weakNames.slice(0,2);mocks='1 full simulation + 2 timed sections'}
+    const qhrs=Math.round(hours*.48*10)/10, vhrs=Math.round(hours*.42*10)/10, review=Math.max(.5,Math.round(hours*.10*10)/10);
+    phases.push({week:w,phase,focus,mocks,qhrs,vhrs,review});
+  }
+  BT_CURRENT_PLAN={created:Date.now(),testDate:testDate.toISOString(),current,target,hours,weeks,gap,weak,phases};
+  renderStudyPlan(BT_CURRENT_PLAN);
+}
+function renderStudyPlan(p){
+  const out=document.getElementById('planOutput'); if(!out||!p)return;
+  const weak=p.weak.length?p.weak.map(x=>`${x.skill} (${x.acc}%)`).join(', '):'Insufficient history — plan starts with broad diagnostic coverage';
+  out.innerHTML=`
+    <div class="plan-summary">
+      <div class="plan-kpi"><small>Preparation window</small><strong>${p.weeks} weeks</strong></div>
+      <div class="plan-kpi"><small>Score gap</small><strong>${p.gap} pts</strong></div>
+      <div class="plan-kpi"><small>Weekly study</small><strong>${p.hours} hrs</strong></div>
+      <div class="plan-kpi"><small>Target</small><strong>${p.target}</strong></div>
+    </div>
+    <div class="diagnostic-callout"><b>Priority weaknesses:</b> ${weak}</div>
+    ${p.phases.map(w=>`<div class="week-card">
+      <h4>Week ${w.week} — ${w.phase}</h4>
+      <div class="plan-focus"><b>Priority:</b> ${w.focus.join(' · ')}</div>
+      <span class="day-chip">Quant ${w.qhrs}h</span>
+      <span class="day-chip">Verbal ${w.vhrs}h</span>
+      <span class="day-chip">Error review ${w.review}h</span>
+      <span class="day-chip">${w.mocks}</span>
+    </div>`).join('')}
+    <p class="muted" style="font-size:11px;margin-top:10px">The target is a study objective, not a guaranteed GRE result. Update the plan after each major diagnostic test.</p>`;
+}
+function saveStudyPlan(){
+  if(!BT_CURRENT_PLAN){generateStudyPlan()}
+  try{localStorage.setItem(btPlanKey(),JSON.stringify(BT_CURRENT_PLAN));alert('Personalized study plan saved for this student.')}catch(e){}
+}
+window.addEventListener('load',()=>{
+  const d=new Date(Date.now()+84*86400000); const el=document.getElementById('planDate');
+  if(el&&!el.value)el.value=d.toISOString().slice(0,10);
+  try{const p=JSON.parse(localStorage.getItem(btPlanKey())||'null');if(p){BT_CURRENT_PLAN=p;renderStudyPlan(p)}}catch(e){}
+});
+</script>
+
+
+<script id="baum-v26-cloud-js">
+const BT_CLOUD={
+  endpoint:(window.BAUM_CLOUD_ENDPOINT||'').trim(),
+  enabled:false,
+  queueKey:'baumCloudSyncQueue'
+};
+function btCloudUser(){
+  try{return JSON.parse(localStorage.getItem('baumGreCurrentUser')||'null')}catch(e){return null}
+}
+function btCloudBundle(){
+  const u=btCloudUser();
+  if(!u)return null;
+  const email=String(u.email||'').toLowerCase();
+  const get=(k)=>{
+    const keys=[`${k}:${email}`,k];
+    for(const x of keys){const v=localStorage.getItem(x);if(v!==null){try{return JSON.parse(v)}catch(e){return v}}}
+    return null;
+  };
+  return {
+    schema:'baum-gre-student-v1',
+    exportedAt:new Date().toISOString(),
+    user:{name:u.name||'',email},
+    analytics:get('baumAnalyticsHistory'),
+    skillStats:get('baumSkillStats'),
+    difficultyStats:get('baumDifficultyStats'),
+    studyPlan:get('baumStudyPlan'),
+    sessions:get('gre330sessions'),
+    profile:get('gre330profile'),
+    weak:get('gre330weak')
+  };
+}
+function exportStudentProfile(){
+  const bundle=btCloudBundle();
+  if(!bundle){alert('Please sign in first.');return}
+  const blob=new Blob([JSON.stringify(bundle,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`BAUM_GRE_${(bundle.user.email||'student').replace(/[^a-z0-9]/gi,'_')}_progress.json`;
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),500);
+}
+function btUpdateCloudStatus(){
+  const dot=document.getElementById('cloudDot'),txt=document.getElementById('cloudStatusText');
+  if(!dot||!txt)return;
+  if(!navigator.onLine){dot.className='cloud-dot offline';txt.textContent='Offline — progress saved on this device';return}
+  if(BT_CLOUD.endpoint){dot.className='cloud-dot online';txt.textContent='Online — cloud endpoint configured';}
+  else{dot.className='cloud-dot';txt.textContent='Online — cloud backend not connected yet';}
+}
+async function btCloudSync(){
+  if(!BT_CLOUD.endpoint||!navigator.onLine)return false;
+  const bundle=btCloudBundle();if(!bundle)return false;
+  try{
+    const res=await fetch(BT_CLOUD.endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(bundle)});
+    if(!res.ok)throw new Error('sync failed');
+    localStorage.setItem('baumLastCloudSync',new Date().toISOString());
+    btUpdateCloudStatus();return true;
+  }catch(e){return false}
+}
+window.addEventListener('online',()=>{btUpdateCloudStatus();btCloudSync()});
+window.addEventListener('offline',btUpdateCloudStatus);
+window.addEventListener('load',()=>{btUpdateCloudStatus();setTimeout(btCloudSync,1000)});
+</script>
+
+
+<script id="baum-v27-server-bank-js">
+const BT_SERVER_BANK={
+  endpoint:(window.BAUM_QUESTION_API||'').trim(),
+  token:()=>{try{return localStorage.getItem('baumAuthToken')||''}catch(e){return ''}},
+  live:false
+};
+async function btFetchQuestionSet({section='Mixed',count=20,format='practice'}={}){
+  if(!BT_SERVER_BANK.endpoint) return null;
+  try{
+    const r=await fetch(BT_SERVER_BANK.endpoint.replace(/\/$/,'')+'/questions/session',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        ...(BT_SERVER_BANK.token()?{'Authorization':'Bearer '+BT_SERVER_BANK.token()}:{})
+      },
+      body:JSON.stringify({section,count,format})
+    });
+    if(!r.ok) throw new Error('Question API '+r.status);
+    const data=await r.json();
+    if(!data || !Array.isArray(data.questions)) throw new Error('Invalid question payload');
+    BT_SERVER_BANK.live=true; btRenderBankMode();
+    return data.questions;
+  }catch(e){
+    console.warn('Legacy question endpoint unavailable.',e);
+    BT_SERVER_BANK.live=false; btRenderBankMode();
+    return null;
+  }
+}
+function btRenderBankMode(){
+  const d=document.getElementById('bankModeDot'),t=document.getElementById('bankModeText');
+  if(!d||!t)return;
+  if(BT_SERVER_BANK.live || BT_SERVER_BANK.endpoint){
+    d.className='bank-dot live';
+    t.textContent=BT_SERVER_BANK.live?'Server question delivery active':'Protected cloud delivery configured — awaiting authenticated session';
+  }else{
+    d.className='bank-dot';
+    t.textContent='Protected cloud delivery required';
+  }
+}
+window.addEventListener('load',btRenderBankMode);
+</script>
+
+
+<script id="baum-v28-quality-js">
+function btQKey(){return 'baumQuestionQualityV28'}
+function btQLoad(){try{return JSON.parse(localStorage.getItem(btQKey())||'{}')}catch(e){return {}}}
+function btQSave(x){try{localStorage.setItem(btQKey(),JSON.stringify(x))}catch(e){}}
+function btEmpiricalBand(acc){
+  if(acc>=.80)return'Easy';
+  if(acc>=.62)return'Medium';
+  if(acc>=.42)return'Hard';
+  return'Very Hard';
+}
+function btRecordItemQuality(q,ok){
+  if(!q||!q.id)return;
+  const db=btQLoad(), id=q.id;
+  db[id]=db[id]||{id,section:q.section||'Quant',skill:q.skill||'General',declared:q.difficulty||'Medium',n:0,c:0};
+  db[id].n++; if(ok)db[id].c++;
+  db[id].last=Date.now();
+  btQSave(db);
+}
+function btRenderQuality(){
+  const db=btQLoad(), rows=Object.values(db);
+  const responses=rows.reduce((s,x)=>s+x.n,0);
+  const flagged=rows.filter(x=>{
+    if(x.n<5)return false;
+    const a=x.c/x.n, empirical=btEmpiricalBand(a);
+    return empirical!==x.declared || a<.15 || a>.95;
+  });
+  const totalBank=(window.BANK?(BANK.quant?.length||0)+(BANK.verbal?.length||0):5000);
+  const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val};
+  set('qObs',rows.length);set('qResp',responses);set('qFlag',flagged.length);
+  set('qCoverage',Math.round(100*rows.length/Math.max(1,totalBank))+'%');
+  const box=document.getElementById('qQualityList');if(!box)return;
+  const display=rows.filter(x=>x.n>=3).sort((a,b)=>b.n-a.n).slice(0,12);
+  box.innerHTML=display.length?display.map(x=>{
+    const acc=x.c/x.n, emp=btEmpiricalBand(acc), flag=x.n>=5&&emp!==x.declared;
+    return `<div class="quality-item"><span><b>${x.id}</b> · ${x.skill}</span><span>${Math.round(acc*100)}% correct</span><span>${x.declared} → ${emp}</span><span class="${flag?'qflag':'qgood'}">${flag?'REVIEW':'OK'}</span></div>`
+  }).join(''):'Complete tests to generate item-quality statistics.';
+}
+const __btV28UpdateTheta=typeof btUpdateTheta==='function'?btUpdateTheta:null;
+if(__btV28UpdateTheta){
+  btUpdateTheta=function(section,isCorrect,difficulty){
+    try{
+      const q=(typeof test!=='undefined'&&test.items)?test.items[test.idx]:
+              (typeof state!=='undefined'&&state.questions)?state.questions[state.idx]:null;
+      if(q)btRecordItemQuality(q,isCorrect);
+    }catch(e){}
+    const r=__btV28UpdateTheta.apply(this,arguments);
+    btRenderQuality();return r;
+  }
+}
+window.addEventListener('load',()=>setTimeout(btRenderQuality,300));
+</script>
+
+
+<script id="baum-v29-simulation-js">
+const BT_SIM={active:false,section:0,sections:[],breakTimer:null,breakRemaining:600,flags:new Set()};
+function btBuildSimulation(){
+  if(!BANK)return [];
+  const v=selectFrom('Verbal',27),q=selectFrom('Quant',27);
+  return [
+    {name:'Verbal Reasoning',items:v,minutes:41},
+    {name:'Quantitative Reasoning',items:q,minutes:47}
+  ];
+}
+function startFullGreSimulation(){
+  if(!BANK){alert('Question bank is still loading.');return}
+  BT_SIM.active=true;BT_SIM.section=0;BT_SIM.sections=btBuildSimulation();BT_SIM.flags=new Set();
+  document.body.classList.add('gre-simulation-active');
+  btStartSimSection();
+}
+function btStartSimSection(){
+  const s=BT_SIM.sections[BT_SIM.section];
+  if(!s){btFinishSimulation();return}
+  const lab=document.getElementById('simSectionLabel');if(lab)lab.textContent=`${BT_SIM.section+1}/${BT_SIM.sections.length} · ${s.name}`;
+  const bar=document.getElementById('simProgressBar');if(bar)bar.style.width=`${100*BT_SIM.section/BT_SIM.sections.length}%`;
+  begin(s.items,s.minutes,`Full GRE · ${s.name}`);
+}
+function btSectionComplete(){
+  if(!BT_SIM.active)return false;
+  if(BT_SIM.section < BT_SIM.sections.length-1){btStartBreak();return true}
+  btFinishSimulation();return true;
+}
+function btStartBreak(){
+  BT_SIM.breakRemaining=600;
+  const screen=document.getElementById('simBreakScreen');if(screen)screen.classList.add('active');
+  clearInterval(BT_SIM.breakTimer);
+  BT_SIM.breakTimer=setInterval(()=>{
+    BT_SIM.breakRemaining--;
+    const m=Math.floor(BT_SIM.breakRemaining/60),s=BT_SIM.breakRemaining%60;
+    const el=document.getElementById('simBreakClock');if(el)el.textContent=`${m}:${String(s).padStart(2,'0')}`;
+    if(BT_SIM.breakRemaining<=0)btEndBreak();
+  },1000);
+}
+function btEndBreak(){
+  clearInterval(BT_SIM.breakTimer);
+  document.getElementById('simBreakScreen')?.classList.remove('active');
+  BT_SIM.section++;btStartSimSection();
+}
+function btFinishSimulation(){
+  clearInterval(BT_SIM.breakTimer);BT_SIM.active=false;
+  document.body.classList.remove('gre-simulation-active');
+  const bar=document.getElementById('simProgressBar');if(bar)bar.style.width='100%';
+}
+function btToggleReviewFlag(index){
+  if(BT_SIM.flags.has(index))BT_SIM.flags.delete(index);else BT_SIM.flags.add(index);
+  try{localStorage.setItem('baumSimFlags',JSON.stringify([...BT_SIM.flags]))}catch(e){}
+}
+function btCheckUnanswered(answers,total){
+  const missing=[];
+  for(let i=0;i<total;i++){
+    const a=answers?.[i];
+    if(a===undefined||a===null||a===''||(Array.isArray(a)&&!a.length))missing.push(i+1);
+  }
+  return missing;
+}
+window.btToggleReviewFlag=btToggleReviewFlag;
+window.btCheckUnanswered=btCheckUnanswered;
+window.addEventListener('beforeunload',e=>{
+  if(BT_SIM.active){e.preventDefault();e.returnValue='';}
+});
+</script>
+
+
+<script id="baum-v30-institutional-js">
+function btInstUser(){try{return JSON.parse(localStorage.getItem('baumGreCurrentUser')||'null')}catch(e){return null}}
+function btInstHistory(){
+  try{
+    const u=btInstUser(),email=String(u?.email||'').toLowerCase();
+    return JSON.parse(localStorage.getItem(`baumAnalyticsHistory:${email}`)||localStorage.getItem('baumAnalyticsHistory')||'[]')
+  }catch(e){return []}
+}
+function btAssignments(){try{return JSON.parse(localStorage.getItem('baumInstitutionAssignments')||'[]')}catch(e){return []}}
+function btInstAcc(c,t){return t?Math.round(100*c/t):null}
+function btInstScore(a){return a===null?null:Math.max(130,Math.min(170,Math.round(130+40*a/100)))}
+function renderInstitutionDashboard(){
+  const u=btInstUser(),h=btInstHistory(),as=btAssignments();
+  let qc=0,qt=0,vc=0,vt=0;
+  h.forEach(x=>{qc+=x.quant?.c||0;qt+=x.quant?.t||0;vc+=x.verbal?.c||0;vt+=x.verbal?.t||0});
+  const q=btInstScore(btInstAcc(qc,qt)),v=btInstScore(btInstAcc(vc,vt));
+  const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val};
+  set('instStudents',u?1:0);set('instTests',h.length);set('instAssignments',as.length);
+  set('instAvg',q&&v?q+v:'--');set('admStudent',u?.name||u?.email||'--');set('admSessions',h.length);set('admQ',q||'--');set('admV',v||'--');
+  const act=document.getElementById('admActivity');
+  if(act)act.innerHTML=h.length?h.slice(0,12).map(x=>`<div class="resultRow"><span>${new Date(x.ts).toLocaleDateString()} · ${x.name||'GRE session'}</span><b>Q ${btInstScore(btInstAcc(x.quant?.c||0,x.quant?.t||0))||'--'} · V ${btInstScore(btInstAcc(x.verbal?.c||0,x.verbal?.t||0))||'--'}</b></div>`).join(''):'No activity recorded yet.';
+  const aa=document.getElementById('admAssignments');
+  if(aa)aa.innerHTML=as.length?as.map(x=>`<div class="resultRow"><span>${x.title}</span><b>${x.type} · ${x.count} questions</b></div>`).join(''):'No assignments created yet.';
+}
+function openInstructorDashboard(){renderInstitutionDashboard();document.getElementById('adminDrawer')?.classList.add('active')}
+function closeInstructorDashboard(){document.getElementById('adminDrawer')?.classList.remove('active')}
+function createPracticeAssignment(){
+  const title=prompt('Assignment title','Weekly GRE Diagnostic');if(!title)return;
+  const type=prompt('Type: Quant, Verbal or Mixed','Mixed')||'Mixed';
+  const count=Math.max(5,Math.min(54,+(prompt('Number of questions','20')||20)));
+  const arr=btAssignments();arr.unshift({id:Date.now(),title,type,count,created:new Date().toISOString(),status:'Active'});
+  localStorage.setItem('baumInstitutionAssignments',JSON.stringify(arr));renderInstitutionDashboard();alert('Assignment created.');
+}
+function exportInstitutionReport(){
+  const report={institution:'BAUM TenPers Institute',generatedAt:new Date().toISOString(),student:btInstUser(),history:btInstHistory(),assignments:btAssignments()};
+  const blob=new Blob([JSON.stringify(report,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='BAUM_GRE_Institution_Report.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),500);
+}
+window.addEventListener('load',()=>setTimeout(renderInstitutionDashboard,350));
+</script>
+
+
+<script id="student-dashboard-clean-js">
+function sdRead(key){
+ try{
+  const u=JSON.parse(localStorage.getItem('baumGreCurrentUser')||'null');
+  const email=String(u?.email||'').toLowerCase();
+  return JSON.parse(localStorage.getItem(email?`${key}:${email}`:key)||localStorage.getItem(key)||(/Stats/.test(key)?'{}':'[]'));
+ }catch(e){return /Stats/.test(key)?{}:[]}
+}
+function sdAcc(c,t){return t?Math.round(100*c/t):null}
+function sdScore(a){return a===null?null:Math.max(130,Math.min(170,Math.round(130+40*a/100)))}
+function renderStudentDashboard(){
+ const hist=sdRead('baumAnalyticsHistory'),skills=sdRead('baumSkillStats'),diff=sdRead('baumDifficultyStats');
+ let qc=0,qt=0,vc=0,vt=0;
+ (Array.isArray(hist)?hist:[]).forEach(h=>{qc+=h.quant?.c||0;qt+=h.quant?.t||0;vc+=h.verbal?.c||0;vt+=h.verbal?.t||0});
+ const qa=sdAcc(qc,qt),va=sdAcc(vc,vt);
+ const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+ set('sdQuantAcc',qa===null?'--':qa+'%');set('sdVerbalAcc',va===null?'--':va+'%');
+ set('sdQuantScore',qa===null?'--':sdScore(qa));set('sdVerbalScore',va===null?'--':sdScore(va));
+ const arr=Object.entries(skills||{}).map(([k,s])=>({k,a:sdAcc(s.c,s.t),n:s.t||0})).sort((a,b)=>(a.a??101)-(b.a??101));
+ const weak=document.getElementById('sdWeakSkills');
+ if(weak)weak.innerHTML=arr.length?arr.slice(0,8).map(x=>`<div class="resultRow"><span>${x.k}</span><b>${x.a}% · ${x.n} q</b></div>`).join(''):'Complete more questions to build your profile.';
+ const de=document.getElementById('sdDifficulty');
+ if(de)de.innerHTML=['Easy','Medium','Hard','Very Hard'].map(k=>{const s=(diff||{})[k],a=s?sdAcc(s.c,s.t):null;return `<div class="resultRow"><span>${k}</span><b>${a===null?'--':a+'%'} · ${s?.t||0} q</b></div>`}).join('');
+ const tr=document.getElementById('sdTrend');
+ if(tr)tr.innerHTML=(Array.isArray(hist)&&hist.length)?hist.slice(0,8).map(h=>`<div class="resultRow"><span>${new Date(h.ts).toLocaleDateString()} · ${h.name||'GRE session'}</span><b>Q ${sdScore(sdAcc(h.quant?.c||0,h.quant?.t||0))||'--'} · V ${sdScore(sdAcc(h.verbal?.c||0,h.verbal?.t||0))||'--'}</b></div>`).join(''):'No completed test history yet.';
+ const fo=document.getElementById('sdFocus');
+ if(fo)fo.innerHTML=arr.length?arr.slice(0,5).map((x,i)=>`<div class="resultRow"><span>${i+1}. ${x.k}</span><b>${x.a}%</b></div>`).join(''):'Complete a test to generate recommendations.';
+ const dg=document.getElementById('sdDiagnostic');
+ if(dg){
+   const total=(qa===null?0:sdScore(qa))+(va===null?0:sdScore(va));
+   dg.innerHTML='<b>330+ diagnostic:</b> '+((hist?.length||0)<3?'Complete at least 3 timed/adaptive sessions for a more stable recommendation.':total>=330?'Current practice estimate is in the 330+ range. Focus on consistency and hard questions.':total>=320?'You are within striking distance of 330. Prioritize your weakest skills and Hard/Very Hard accuracy.':'Build Medium-level accuracy first, then increase Hard/Very Hard volume.');
+ }
+}
+function openStudentDashboard(){renderStudentDashboard();document.getElementById('studentDashboardOverlay')?.classList.add('active')}
+function closeStudentDashboard(){document.getElementById('studentDashboardOverlay')?.classList.remove('active')}
+</script>
+
+
+<script id="baum-sidebar-clean-js">
+function openBaumSidebar(){
+  document.getElementById('baumSidebar')?.classList.add('open');
+  document.getElementById('sidebarBackdrop')?.classList.add('active');
+}
+function closeBaumSidebar(){
+  document.getElementById('baumSidebar')?.classList.remove('open');
+  document.getElementById('sidebarBackdrop')?.classList.remove('active');
+}
+function toggleSidebarSection(id){
+  const target=document.getElementById(id);
+  if(!target)return;
+  const opening=!target.classList.contains('open');
+  document.querySelectorAll('.sidebar-section-content').forEach(x=>x.classList.remove('open'));
+  if(opening) target.classList.add('open');
+}
+function moveFeatureIntoSidebar(sourceSelector,targetId){
+  const source=document.querySelector(sourceSelector);
+  const target=document.getElementById(targetId);
+  if(source && target){
+    target.appendChild(source);
+    source.style.display='';
+  }
+}
+window.addEventListener('load',()=>{
+  // Move these four features completely off the main page into the sidebar.
+  moveFeatureIntoSidebar('.student-dash-launch','sbStudent');
+  moveFeatureIntoSidebar('#institutionPlatform','sbInstitution');
+  moveFeatureIntoSidebar('#serverBankPanel','sbSecurity');
+  moveFeatureIntoSidebar('#cloudAccountPanel','sbCloud');
+
+  // Student dashboard opener remains functional from within sidebar.
+  // Main performance analytics itself remains in the Student Dashboard overlay.
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') closeBaumSidebar();
+});
+</script>
+
+
+<script id="baum-route-controller">
+(function(){
+  function routeName(){
+    const f=(location.pathname.split('/').pop()||'index.html').toLowerCase();
+    return f;
+  }
+  function setFormat(format,type,count,subtitle){
+    const fmt=document.getElementById('mainTestFormat');
+    const typ=document.getElementById('mainTestType');
+    const cnt=document.getElementById('mainTestCount');
+    if(fmt){fmt.value=format;fmt.disabled=true}
+    if(typ && type) typ.value=type;
+    if(cnt && count) cnt.value=String(count);
+    const sub=document.getElementById('routeTestSubtitle');
+    if(sub && subtitle) sub.textContent=subtitle;
+    if(typeof updateMainTestOptions==='function') updateMainTestOptions();
+  }
+  window.addEventListener('load',()=>{
+    const f=routeName();
+    if(['test.html','cbt.html','practice.html','simulation.html'].includes(f)){
+      document.body.classList.add('baum-test-route');
+      if(typeof showOnly==='function') showOnly('home');
+      if(f==='cbt.html') setFormat('section',null,27,'Timed GRE CBT workspace. Choose Quant, Verbal, or Quant + Verbal.');
+      if(f==='practice.html') setFormat('practice',null,20,'Untimed GRE practice workspace with targeted review.');
+      if(f==='simulation.html') setFormat('full','Mixed',54,'Full Quant + Verbal GRE simulation workspace.');
+      return;
+    }
+    if(f==='student.html'){
+      document.body.classList.add('baum-student-route');
+      setTimeout(()=>{ if(typeof openStudentDashboard==='function') openStudentDashboard(); },250);
+      return;
+    }
+    if(f==='institution.html'){
+      document.body.classList.add('baum-institution-route');
+      setTimeout(()=>{ if(typeof openInstructorDashboard==='function') openInstructorDashboard(); },250);
+      return;
+    }
+    if(f==='security.html'){
+      document.body.classList.add('baum-security-route');
+      setTimeout(()=>{
+        if(typeof openBaumSidebar==='function') openBaumSidebar();
+        const x=document.getElementById('sbSecurity'); if(x)x.classList.add('open');
+      },250);
+      return;
+    }
+    if(f==='account.html'){
+      document.body.classList.add('baum-account-route');
+      setTimeout(()=>{
+        if(typeof openBaumSidebar==='function') openBaumSidebar();
+        const x=document.getElementById('sbCloud'); if(x)x.classList.add('open');
+      },250);
+    }
+  });
+})();
+</script>
+
+<script id="baum-supabase-protected-delivery-js">
+/* BAUM production protected delivery: fail closed. No local question-content fallback. */
+(function(){
+  const FUNCTIONS_BASE = String(window.BAUM_SUPABASE_URL || '').replace(/\/$/,'') + '/functions/v1';
+
+  function btNormalizeServerQuestion(q){
+    const choices = Array.isArray(q?.choices) ? q.choices : [];
+    const multi = String(q?.skill || '').toLowerCase() === 'sentence equivalence';
+    return {
+      id:q.id,
+      section:q.section,
+      skill:q.skill,
+      difficulty:q.difficulty,
+      question:q.prompt,
+      options:choices,
+      answer:multi ? [] : null,
+      explanation:'',
+      __btServer:true
+    };
+  }
+
+  async function btAccessToken(){
+    if(typeof baumSupabase==='undefined') throw new Error('Supabase client is not initialized.');
+    const {data:{session},error} = await baumSupabase.auth.getSession();
+    if(error) throw error;
+    if(!session?.access_token) throw new Error('Please sign in before starting a protected question session.');
+    return session.access_token;
+  }
+
+  async function btFunctionPost(name,payload){
+    if(!window.BAUM_SUPABASE_URL || !window.BAUM_SUPABASE_PUBLISHABLE_KEY){
+      throw new Error('Protected question service is not configured.');
+    }
+    if(!navigator.onLine) throw new Error('An internet connection is required for protected question delivery.');
+    const token = await btAccessToken();
+    const r = await fetch(`${FUNCTIONS_BASE}/${name}`,{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':`Bearer ${token}`,
+        'apikey':window.BAUM_SUPABASE_PUBLISHABLE_KEY
+      },
+      body:JSON.stringify(payload)
+    });
+    let data=null;
+    try{ data=await r.json(); }catch(e){}
+    if(!r.ok) throw new Error(data?.error || `${name} failed with HTTP ${r.status}`);
+    return data;
+  }
+
+  if(typeof BT_SERVER_BANK !== 'undefined'){
+    BT_SERVER_BANK.endpoint=FUNCTIONS_BASE;
+    BT_SERVER_BANK.live=false;
+  }
+
+  window.btFetchQuestionSet=async function({section='Mixed',count=20,format='practice'}={}){
+    try{
+      const data=await btFunctionPost('question-session',{
+        section,
+        mode:format,
+        count:Math.max(1,Math.min(Number(count)||20,54))
+      });
+      if(!data?.session_id || !Array.isArray(data.questions) || !data.questions.length){
+        throw new Error('Invalid protected question payload.');
+      }
+      if(typeof BT_SERVER_BANK !== 'undefined') BT_SERVER_BANK.live=true;
+      if(typeof btRenderBankMode==='function') btRenderBankMode();
+      return {session_id:data.session_id,questions:data.questions.map(btNormalizeServerQuestion)};
+    }catch(e){
+      console.error('Protected question delivery failed:',e);
+      if(typeof BT_SERVER_BANK !== 'undefined') BT_SERVER_BANK.live=false;
+      if(typeof btRenderBankMode==='function') btRenderBankMode();
+      throw e;
+    }
+  };
+
+  window.btRenderBankMode=function(){
+    const d=document.getElementById('bankModeDot'),t=document.getElementById('bankModeText');
+    if(!d||!t)return;
+    if(typeof BT_SERVER_BANK !== 'undefined' && BT_SERVER_BANK.live){
+      d.className='bank-dot live';
+      t.textContent='Protected cloud question delivery active';
+    }else if(window.BAUM_SUPABASE_URL){
+      d.className='bank-dot';
+      t.textContent='Protected cloud delivery configured — sign in to begin';
+    }else{
+      d.className='bank-dot offline';
+      t.textContent='Protected question service unavailable';
+    }
+  };
+
+  const __btLocalBegin=window.begin;
+  if(typeof __btLocalBegin==='function'){
+    window.begin=async function(localQuestions,minutes,name){
+      const original=Array.isArray(localQuestions)?localQuestions:[];
+      const sections=[...new Set(original.map(q=>q?.section).filter(Boolean))];
+      const section=sections.length===1?sections[0]:'Mixed';
+      const format=(typeof BT_ADAPTIVE!=='undefined' && BT_ADAPTIVE.active)
+        ? 'adaptive'
+        : (minutes ? 'timed' : 'practice');
+      try{
+        const payload=await window.btFetchQuestionSet({section,count:original.length||20,format});
+        if(!payload?.questions?.length) throw new Error('No protected questions were returned.');
+        state._btServerSessionId=payload.session_id;
+        state._btServerBacked=true;
+        return __btLocalBegin(payload.questions,minutes,name);
+      }catch(e){
+        state._btServerSessionId=null;
+        state._btServerBacked=false;
+        alert(`This test could not start because protected cloud question delivery is unavailable. No local question copy is used in production.
+
+${e?.message||e}`);
+        return false;
+      }
+    };
+  }
+
+  const __btLegacySubmit=window.submitExam;
+  if(typeof __btLegacySubmit==='function'){
+    window.submitExam=async function(auto){
+      if(!state?._btServerBacked || !state?._btServerSessionId){
+        alert('This session is not a verified protected cloud session and cannot be graded. Please return home and start a new test.');
+        return false;
+      }
+      if(!auto && !confirm('Submit this session now?')) return;
+      if(state._btSubmitting) return;
+      state._btSubmitting=true;
+      if(state.timerId){ clearInterval(state.timerId); state.timerId=null; }
+
+      try{
+        const elapsed=Math.max(0,Math.round((Date.now()-state.started)/1000));
+        const answers=state.questions.map((q,i)=>({
+          question_id:q.id,
+          answer:state.answers[i],
+          response_time_seconds:state.questions.length ? Math.round(elapsed/state.questions.length) : null
+        }));
+        const result=await btFunctionPost('submit-test',{
+          session_id:state._btServerSessionId,
+          answers,
+          duration_seconds:elapsed
+        });
+        if(!Array.isArray(result?.graded)) throw new Error('Invalid grading response.');
+
+        const graded=new Map(result.graded.map(g=>[String(g.question_id),g]));
+        state.questions.forEach(q=>{
+          const g=graded.get(String(q.id));
+          if(!g) return;
+          q.answer=g.correct_answer;
+          q.explanation=g.explanation || '';
+          if(g.skill) q.skill=g.skill;
+          if(g.section) q.section=g.section;
+          q.__btGraded=true;
+        });
+
+        state._btServerBacked=false;
+        state._btServerSessionId=null;
+        return __btLegacySubmit.call(this,true);
+      }catch(e){
+        console.error('Protected submission failed:',e);
+        alert(`Your answers remain on this screen, but secure server grading did not complete. Check your connection and submit again.
+
+${e?.message||e}`);
+        if(state.seconds!==null && state.seconds>0 && !state.timerId){
+          state.timerId=setInterval(()=>{state.seconds--;renderTimer();if(state.seconds<=0)submitExam(true)},1000);
+        }
+        return false;
+      }finally{
+        state._btSubmitting=false;
+      }
+    };
+  }
+
+  window.addEventListener('load',()=>{
+    if(typeof btRenderBankMode==='function') setTimeout(btRenderBankMode,100);
+  });
+})();
+</script>
+
+</body>
+</html>

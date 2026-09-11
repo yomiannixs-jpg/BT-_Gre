@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+textbooks/*.pdf
+textbooks/**/*.pdf
+testmaterials/*.pdf
+downloads/
+supabase/.temp/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
